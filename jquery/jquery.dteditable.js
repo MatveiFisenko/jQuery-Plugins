@@ -18,9 +18,9 @@
   *
   * @name  DTEditable
   * @type  jQuery
-  * @param String  target             (POST) URL or function to send edited content to **
+  * @param String  target             (POST) URL or function to send edited content to
   * @param Hash    options            additional options
-  * @param Function options[callback] Function to run after submitting edited content **
+  * @param Function options[callback] Function to run after submitting edited content
   * @param Hash    options[submitdata] Extra parameters to send when submitting edited content.
   *
   */
