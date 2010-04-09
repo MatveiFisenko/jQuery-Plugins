@@ -28,7 +28,7 @@
 (function($) {
 
     $.fn.editable = function(target, settings) {
-    	this.live('click.editable', function(e) {
+    	this.live($.editable.sEventName, function(e) {
     		if ($(this).data('bEditing')) return;
 
             e.preventDefault();
@@ -91,7 +91,8 @@
     	},
     	setText: function(e, sText) {
     		$(e).html(sText || $(e).data('sOldText')).removeData('bEditing');
-    	}
+    	},
+    	sEventName: 'click.dteditable'
     };
 
-})(JQuery);
+})(jQuery);
