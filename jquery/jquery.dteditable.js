@@ -18,12 +18,15 @@
   *
   * @name  DTEditable
   * @type  jQuery
-  * @param String  target             (POST) URL or function to send edited content to
-  * @param Hash    options            additional options
-  * @param Function options[callback] Function to run after submitting edited content
-  * @param Hash    options[submitdata] Extra parameters to send when submitting edited content.
+  * @param String	target				(POST) URL or function to send edited content to
+  * @param Hash		options				additional options
+  * @param Object	options[oTable] 	DataTables object
+  * @param Function	options[callback]	Function to run after submitting edited content
+  * @param Hash		options[submitdata]	Extra parameters to send when submitting edited content.
   *
   */
+
+//TODO possible change #example tbody td with #example tbody
 
 (function($) {
 
@@ -77,6 +80,23 @@
     		else {//all other
     			$.editable.setTimeout(this);
     		}
+    	});
+
+    	this.live('dblclick', function(e) {
+    		console.log('dblclick');
+
+    		if (!settings.oOverlay) {
+    			settings.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
+    				top: '10%',
+    				speed: 'fast',
+    				closeOnClick: true,
+    				api: true
+    			});
+    		}
+
+    		$('#overlay').load(sModuleURL + 'show/' + settings.oTable.fnGetData(this.parentNode)[0]);
+
+    		settings.oOverlay.load();
     	});
     };
 
