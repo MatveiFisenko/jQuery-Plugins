@@ -88,7 +88,7 @@
     	});
 
     	this.live('dblclick.' + $.editable.sSelfName, function(e) {
-    		console.log('dblclick');
+    		if (e.target != this && ($.editable.getTime() > $(this).data('iTimeoutStartTime') + 500)) return;
 
     		if (!settings.oOverlay) {
     			settings.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
@@ -110,9 +110,13 @@
     		$.editable.clearTimeout(e);
 
     		$(e).data('iTimeoutID', setTimeout(function() {$.editable.setText(e);}, 2000));
+    		$(e).data('iTimeoutStartTime', $.editable.getTime());
     	},
     	clearTimeout: function(e) {
     		clearTimeout($(e).data('iTimeoutID'));
+    	},
+    	getTime: function() {
+    		return (new Date()).getTime();
     	},
     	setText: function(e, sText) {
     		$(e).html(sText || $(e).data('sOldText')).removeData('bEditing');
