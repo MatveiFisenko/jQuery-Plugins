@@ -30,7 +30,7 @@
  * TODO:
  * possible change #example tbody td with #example tbody
  * possible change events click -> dblclick and vice versa
- * submit bug report about e.preventDefault();
+ * submit bug report about e.preventDefault() and e.stopPropagation() - it makes no sense when work with overlay;
  *
  */
 
