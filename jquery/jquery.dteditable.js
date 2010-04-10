@@ -30,6 +30,7 @@
  * TODO:
  * possible change #example tbody td with #example tbody
  * possible change events click -> dblclick and vice versa
+ * submit bug report about e.preventDefault();
  *
  */
 
@@ -39,7 +40,7 @@
     	this.live('click.' + $.editable.sSelfName, function(e) {
     		if ($(this).data('bEditing')) return;
 
-            e.preventDefault();
+//          e.preventDefault();//because overlays do not get click event
             e.stopPropagation();
 
     		$(this).data('sOldText', this.innerHTML)
