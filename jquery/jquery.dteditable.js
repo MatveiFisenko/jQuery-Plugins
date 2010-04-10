@@ -36,7 +36,7 @@
 (function($) {
 
     $.fn.editable = function(target, settings) {
-    	this.live($.editable.sEventName, function(e) {
+    	this.live('click.' + $.editable.sSelfName, function(e) {
     		if ($(this).data('bEditing')) return;
 
             e.preventDefault();
@@ -50,7 +50,7 @@
     		$.editable.setTimeout(this);
     	});
 
-    	this.live('keydown', function(e) {
+    	this.live('keydown.' + $.editable.sSelfName, function(e) {
     		if (!$(this).data('bEditing')) return;
 
     		if (e.which == 13) {//enter
@@ -87,7 +87,7 @@
     		}
     	});
 
-    	this.live('dblclick', function(e) {
+    	this.live('dblclick.' + $.editable.sSelfName, function(e) {
     		console.log('dblclick');
 
     		if (!settings.oOverlay) {
@@ -117,7 +117,7 @@
     	setText: function(e, sText) {
     		$(e).html(sText || $(e).data('sOldText')).removeData('bEditing');
     	},
-    	sEventName: 'click.dteditable'
+    	sSelfName: 'dteditable'
     };
 
 })(jQuery);
