@@ -26,7 +26,12 @@
   *
   */
 
-//TODO possible change #example tbody td with #example tbody
+/*
+ * TODO:
+ * possible change #example tbody td with #example tbody
+ * possible change events click -> dblclick and vice versa
+ *
+ */
 
 (function($) {
 
