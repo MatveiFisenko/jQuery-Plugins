@@ -15,7 +15,7 @@ oDataTableDefaults = {
 		"sProcessing": 'Работаем с данными',
 		"sZeroRecords": "Нет такой буквы",
 		"sInfo": "Вывожу с _START_ по _END_ из _TOTAL_ записей",
-		"sInfoEmtpy": "Вывожу с 0 по 0 из 0 записей",
+		"sInfoEmpty": "Вывожу с 0 по 0 из 0 записей",
 		"sInfoFiltered": "(найдено из _MAX_ записей)",
 		"sInfoPostFix": "",
 		"sSearch": "Поиск:",
@@ -26,6 +26,6 @@ oDataTableDefaults = {
 			"sPrevious": "<"
 		}
 	},
-	"bProcessing": true,
+//	"bProcessing": true
 	"bJQueryUI": false
 };
