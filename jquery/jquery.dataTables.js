@@ -2968,6 +2968,7 @@
 			nFilter.innerHTML = oSettings.oLanguage.sSearch+sSpace+'<input type="text" />';
 
 			var jqFilter = $("input", nFilter);
+			jqFilter.addClass('ui-state-active ui-corner-all');
 			jqFilter.val( oSettings.oPreviousSearch.sSearch.replace('"','&quot;') );
 			jqFilter.keyup( function(e) {
 				/* Update all other filter input elements for the new display */
