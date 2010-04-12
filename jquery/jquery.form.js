@@ -26,6 +26,7 @@
  * TODO:
  * removeErrors - line #102 bug report #6390
  * not clear work with sAfterHandler
+ * oXHRWindow will not work in prototype's way - rebuild
  * port confirmation/next form possibilities from xhrForm
  *
  */
