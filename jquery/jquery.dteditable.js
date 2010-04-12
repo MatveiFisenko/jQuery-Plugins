@@ -16,13 +16,15 @@
 /**
   * Version 0.1
   *
+  * '*' - mandatory
   * @name  DTEditable
   * @type  jQuery
-  * @param String	target				(POST) URL or function to send edited content to
-  * @param Hash		options				additional options
-  * @param Object	options[oTable] 	DataTables object
-  * @param Function	options[callback]	Function to run after submitting edited content
-  * @param Hash		options[submitdata]	Extra parameters to send when submitting edited content.
+  * @param String	target				(POST) URL or function to send edited content to. *
+  * @param Hash		options				Additional options.
+  * @param Object	options[oTable] 	DataTables object. *
+  * @param Function	options[callback]	Function to run after submitting edited content.
+  * @param Hash		options[submitdata]	Extra parameters to send when submitting edited content. Can be function returning hash.
+  * @param bool		options[toolbar]	Create toolbar (default true).
   *
   */
 
@@ -36,7 +38,14 @@
 
 (function($) {
 
-    $.fn.editable = function(target, settings) {
+    $.fn.editable = function(target, options) {
+
+    	options = $.extend({}, $.editable.defaultOptions, options);
+
+    	if (options.toolbar !== false) {
+    		$.editable.createToolbar(options.oTable);
+    	}
+
     	this.live('click.' + $.editable.sSelfName, function(e) {
     		if ($(this).data('bEditing')) return;
 
@@ -62,20 +71,20 @@
     				value: e.target.value
     			};
 
-    			if (settings.submitdata) {
-    				if ($.isFunction(settings.submitdata)) {
-                        $.extend(oSubmitData, settings.submitdata.call(this));
+    			if (options.submitdata) {
+    				if ($.isFunction(options.submitdata)) {
+                        $.extend(oSubmitData, options.submitdata.call(this, options.oTable));
                     }
     				else {
-    					$.extend(oSubmitData, settings.submitdata);
+    					$.extend(oSubmitData, options.submitdata);
                     }
     			}
 
     			$.post(target, oSubmitData, $.proxy(function (sText) {
     					$.editable.setText(this, sText);
 
-    					if ($.isFunction(settings.callback)) {
-    						settings.callback.call(this, sText);
+    					if ($.isFunction(options.callback)) {
+    						options.callback.call(this, sText, options.oTable);
     					}
     				}, this));
     		}
@@ -91,8 +100,8 @@
     	this.live('dblclick.' + $.editable.sSelfName, function(e) {
     		if (e.target != this && ($.editable.getTime() > $(this).data('iTimeoutStartTime') + 500)) return;
 
-    		if (!settings.oOverlay) {
-    			settings.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
+    		if (!options.oOverlay) {
+    			options.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
     				top: '10%',
     				speed: 'fast',
     				closeOnClick: true,
@@ -100,9 +109,9 @@
     			});
     		}
 
-    		$('#overlay').load(sModuleURL + 'show/' + settings.oTable.fnGetData(this.parentNode)[0]);
+    		$('#overlay').load(sModuleURL + 'show/' + options.oTable.fnGetData(this.parentNode)[0]);
 
-    		settings.oOverlay.load();
+    		options.oOverlay.load();
     	});
     };
 
@@ -122,9 +131,42 @@
     	setText: function(e, sText) {
     		$(e).html(sText || $(e).data('sOldText')).removeData('bEditing');
     	},
-    	sSelfName: 'dteditable'
+    	sSelfName: 'dteditable',
+
+    	//used as default options
+    	defaultCallback: function(sValue, oTable) {
+			var aPos = oTable.fnGetPosition(this);
+			oTable.fnUpdate(sValue, aPos[0], aPos[2], false);//with last option we can re-sort table after update, but we lose pagination
+		},
+		defaultSubmitdata: function(oTable) {
+			return {
+				"iID": oTable.fnGetData(this.parentNode)[0],
+				"sColumnName": oTable.fnSettings().aoColumns[oTable.fnGetPosition(this)[2]].sName
+			};
+		},
+
+    	//create toolbar
+    	createToolbar: function(oTable) {
+			oTable.parent().find('div.dtBar')
+				.html('<div class="ui-state-default ui-corner-all" style="padding: 4px;"><span class="ui-icon ui-icon-circle-plus"></span></div>')
+				.children().hover(
+		    		function() { $(this).addClass('ui-state-hover'); },
+		    		function() { $(this).removeClass('ui-state-hover'); }
+		    	)
+		    	.find('.ui-icon-circle-plus').click(function(){$.editable.addRow(oTable);});
+    	},
+
+    	//add new row
+    	addRow: function(oTable) {
+    		$.post(sModuleURL + 'add', function(sText, sStatus, oJSReq) {
+    			$(oTable.fnGetNodes(oTable.fnAddData(oJSReq.responseJS)))
+    				.children(':first').trigger($.editable.edit);
+    		});
+    	}
     };
 
+	//default options used
+    $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);
