@@ -80,23 +80,23 @@
 
 		//show text errors messages
 		showErrors: function(oResponse) {
-			if (!$(this).children('div.validation_error').length) {
-				$(this).prepend('<div class="validation_error"></div>');
+			if (!$(this).children('div.ui-state-error').length) {
+				$(this).prepend('<div class="ui-state-error"></div>');
 			}
 
-			$(this).children('div.validation_error').html(oResponse.sErrors).show();
+			$(this).children('div.ui-state-error').html(oResponse.sErrors).show();
 
 			//first add # to error id, than add class, than focus first one
-			$($.map(oResponse.aErrorIDs, function(item) { return '#' + item;}).join()).addClass('validation_error').eq(0).focus();
+			$($.map(oResponse.aErrorIDs, function(item) { return '#' + item;}).join()).addClass('ui-state-error').eq(0).focus();
 		},
 
 		//remove errors from previous call
 		removeErrors: function() {
-			if($(this).children('div.validation_error').length) {
-				$(this).children('div.validation_error').empty().hide();
+			if($(this).children('div.ui-state-error').length) {
+				$(this).children('div.ui-state-error').empty().hide();
 			}
 
-			$(this).find(':input').removeClass('validation_error');
+			$(this).find(':input').removeClass('ui-state-error');
 	//		Or like this without error
 	//		$($(this.iID)[0].elements).removeClass('validation_error');
 		},
