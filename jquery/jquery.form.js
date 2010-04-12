@@ -81,10 +81,12 @@
 		//show text errors messages
 		showErrors: function(oResponse) {
 			if (!$(this).children('div.ui-state-error').length) {
-				$(this).prepend('<div class="ui-state-error"></div>');
+				$(this).prepend('<div class="ui-state-error ui-corner-all">' +
+					'<div class="ui-icon ui-icon-alert" style="float: left;"></div>' +
+					'<div style="margin-left: 20px;" class="errors"></div></div>');
 			}
 
-			$(this).children('div.ui-state-error').html(oResponse.sErrors).show();
+			$(this).find('div.errors').html(oResponse.sErrors).parent().show();
 
 			//first add # to error id, than add class, than focus first one
 			$($.map(oResponse.aErrorIDs, function(item) { return '#' + item;}).join()).addClass('ui-state-error').eq(0).focus();
@@ -93,7 +95,7 @@
 		//remove errors from previous call
 		removeErrors: function() {
 			if($(this).children('div.ui-state-error').length) {
-				$(this).children('div.ui-state-error').empty().hide();
+				$(this).children('div.ui-state-error').hide().children('div.errors').empty();
 			}
 
 			$(this).find(':input').removeClass('ui-state-error');
