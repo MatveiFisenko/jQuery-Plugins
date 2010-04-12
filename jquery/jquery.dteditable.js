@@ -125,4 +125,6 @@
     	sSelfName: 'dteditable'
     };
 
+    $.editable.edit = 'click.' + $.editable.sSelfName;
+
 })(jQuery);
