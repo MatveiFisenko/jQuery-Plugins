@@ -5262,14 +5262,14 @@ jQuery.extend({
 		}
 
 		function success() {
-			// If a local callback was specified, fire it and pass it the data
-			if ( s.success ) {
-				s.success.call( callbackContext, data, status, xhr );
-			}
-
 			// Fire the global callback
 			if ( s.global ) {
 				trigger( "ajaxSuccess", [xhr, s] );
+			}
+
+			// If a local callback was specified, fire it and pass it the data
+			if ( s.success ) {
+				s.success.call( callbackContext, data, status, xhr );
 			}
 		}
 
