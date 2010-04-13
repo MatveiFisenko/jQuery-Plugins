@@ -40,7 +40,10 @@
 
     $.fn.editable = function(target, options) {
 
-    	options = $.extend({}, $.editable.defaultOptions, options);
+    	var iOptionsID = $.editable.options.length;
+    	$.editable.options[iOptionsID] = $.extend({}, $.editable.defaultOptions, options);
+
+    	this.eq(0).closest('table').data('editable.iOptionsID', iOptionsID);
 
     	if (options.toolbar !== false) {
     		$.editable.createToolbar(options.oTable);
@@ -71,6 +74,8 @@
     				value: e.target.value
     			};
 
+    			var options = $.editable.options[$(this).closest('table').data('editable.iOptionsID')];
+
     			if (options.submitdata) {
     				if ($.isFunction(options.submitdata)) {
                         $.extend(oSubmitData, options.submitdata.call(this, options.oTable));
@@ -100,13 +105,20 @@
     	this.live('dblclick.' + $.editable.sSelfName, function(e) {
     		if (e.target != this && ($.editable.getTime() > $(this).data('iTimeoutStartTime') + 500)) return;
 
+    		var options = $.editable.options[$(this).closest('table').data('editable.iOptionsID')];
+
     		if (!options.oOverlay) {
-    			options.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
-    				top: '10%',
-    				speed: 'fast',
-    				closeOnClick: true,
-    				api: true
-    			});
+    			if ($('#overlay').length) {//if we have overlay already - use it
+    				options.oOverlay = $('#overlay').overlay();
+    			}
+    			else {
+	    			options.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
+	    				top: '10%',
+	    				speed: 'fast',
+	    				closeOnClick: true,
+	    				api: true
+	    			});
+    			}
     		}
 
     		$('#overlay').load(sModuleURL + 'show/' + options.oTable.fnGetData(this.parentNode)[0]);
@@ -116,6 +128,10 @@
     };
 
     $.editable = {
+    	options: [],
+    	sSelfName: 'dteditable',
+
+
    		setTimeout: function(e) {
     		$.editable.clearTimeout(e);
 
@@ -131,7 +147,6 @@
     	setText: function(e, sText) {
     		$(e).html(sText || $(e).data('sOldText')).removeData('bEditing');
     	},
-    	sSelfName: 'dteditable',
 
     	//used as default options
     	defaultCallback: function(sValue, oTable) {
