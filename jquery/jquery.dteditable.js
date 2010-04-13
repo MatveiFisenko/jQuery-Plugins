@@ -43,28 +43,28 @@
     	var iOptionsID = $.editable.options.length;
     	$.editable.options[iOptionsID] = $.extend({}, $.editable.defaultOptions, options);
 
-    	this.eq(0).closest('table').data('editable.iOptionsID', iOptionsID);
+    	this.eq(0).closest('table').data($.editable.sSelfName + 'iOptionsID', iOptionsID);
 
     	if (options.toolbar !== false) {
     		$.editable.createToolbar(options.oTable);
     	}
 
     	this.live('click.' + $.editable.sSelfName, function(e) {
-    		if ($(this).data('bEditing')) return;
+    		if ($(this).data($.editable.sSelfName + 'bEditing')) return;
 
 //          e.preventDefault();//because overlays do not get click event
             e.stopPropagation();
 
-    		$(this).data('sOldText', this.innerHTML)
+    		$(this).data($.editable.sSelfName + 'sOldText', this.innerHTML)
     			.html('<input type="text" value="' + this.innerHTML + '" />')
-    			.data('bEditing', true)
+    			.data($.editable.sSelfName + 'bEditing', true)
     			.children().focus();
 
     		$.editable.setTimeout(this);
     	});
 
     	this.live('keydown.' + $.editable.sSelfName, function(e) {
-    		if (!$(this).data('bEditing')) return;
+    		if (!$(this).data($.editable.sSelfName + 'bEditing')) return;
 
     		if (e.which == 13) {//enter
     			$.editable.clearTimeout(this);
@@ -74,7 +74,7 @@
     				value: e.target.value
     			};
 
-    			var options = $.editable.options[$(this).closest('table').data('editable.iOptionsID')];
+    			var options = $.editable.options[$(this).closest('table').data($.editable.sSelfName + 'iOptionsID')];
 
     			if (options.submitdata) {
     				if ($.isFunction(options.submitdata)) {
@@ -103,9 +103,9 @@
     	});
 
     	this.live('dblclick.' + $.editable.sSelfName, function(e) {
-    		if (e.target != this && ($.editable.getTime() > $(this).data('iTimeoutStartTime') + 500)) return;
+    		if (e.target != this && ($.editable.getTime() > $(this).data($.editable.sSelfName + 'iTimeoutStartTime') + 500)) return;
 
-    		var options = $.editable.options[$(this).closest('table').data('editable.iOptionsID')];
+    		var options = $.editable.options[$(this).closest('table').data($.editable.sSelfName + 'iOptionsID')];
 
     		if (!options.oOverlay) {
     			if ($('#overlay').length) {//if we have overlay already - use it
@@ -135,17 +135,17 @@
    		setTimeout: function(e) {
     		$.editable.clearTimeout(e);
 
-    		$(e).data('iTimeoutID', setTimeout(function() {$.editable.setText(e);}, 2000));
-    		$(e).data('iTimeoutStartTime', $.editable.getTime());
+    		$(e).data($.editable.sSelfName + 'iTimeoutID', setTimeout(function() {$.editable.setText(e);}, 2000));
+    		$(e).data($.editable.sSelfName + 'iTimeoutStartTime', $.editable.getTime());
     	},
     	clearTimeout: function(e) {
-    		clearTimeout($(e).data('iTimeoutID'));
+    		clearTimeout($(e).data($.editable.sSelfName + 'iTimeoutID'));
     	},
     	getTime: function() {
     		return (new Date()).getTime();
     	},
     	setText: function(e, sText) {
-    		$(e).html(sText || $(e).data('sOldText')).removeData('bEditing');
+    		$(e).html(sText || $(e).data($.editable.sSelfName + 'sOldText')).removeData($.editable.sSelfName + 'bEditing');
     	},
 
     	//used as default options
