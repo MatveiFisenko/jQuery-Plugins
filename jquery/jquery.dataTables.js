@@ -4579,7 +4579,7 @@
 			sValue += "]";
 
 			sValue += "}";
-			_fnCreateCookie( "SpryMedia_DataTables_"+oSettings.sInstance, sValue,
+			_fnCreateCookie( "DataTables_"+oSettings.sInstance, sValue,
 				oSettings.iCookieDuration );
 		}
 
@@ -4598,7 +4598,7 @@
 			}
 
 			var oData;
-			var sData = _fnReadCookie( "SpryMedia_DataTables_"+oSettings.sInstance );
+			var sData = _fnReadCookie( "DataTables_"+oSettings.sInstance );
 			if ( sData !== null && sData !== '' )
 			{
 				/* Try/catch the JSON eval - if it is bad then we ignore it */
