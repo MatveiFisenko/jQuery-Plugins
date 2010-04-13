@@ -4909,6 +4909,11 @@
 						"Please use the API to make any configuration changes required." );
 					return _aoSettings[i];
 				}
+				//remove table config if it is re-loaded (ajax load for example)
+				if ( _aoSettings[i].sInstance == this.getAttribute( 'id' ) ) {
+					_aoSettings.splice(i, 1);
+					break;
+				}
 			}
 
 			/* Make a complete and independent copy of the settings object */
