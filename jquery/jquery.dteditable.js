@@ -171,7 +171,7 @@
     			}
     		}
 
-    		$('#overlay').load(sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
+    		$('#overlay').load(options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
 
     		options.oOverlay.load();
     	});
