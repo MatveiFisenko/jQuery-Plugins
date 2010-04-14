@@ -24,6 +24,7 @@
   * @param Object	options[oTable] 		DataTables object. *
   * @param Function	options[callback]		Function to run after submitting edited content.
   * @param Hash		options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
+  * @param Hash		options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash.
   * @param bool		options[toolbar]		Create toolbar (default true).
   * @param Hash		options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
   *
@@ -127,10 +128,10 @@
                     }
     			}
 
-    			$.post(options.sModuleURL + 'update', oSubmitData, $.proxy(function (sText) {
+    			$.post(options.sModuleURL + 'update', oSubmitData, $.proxy(function (sText, sStatus, oJSReq) {
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
-							sText = options.selectColumns[oSubmitData.sColumnName][parseInt(sText)];
+							sText = options.selectColumns[oSubmitData.sColumnName][parseInt(oJSReq.responseJS)];
 						}
     					$.editable.setText(oTD, sText);
 
@@ -243,7 +244,20 @@
 
     	//add new row
     	addRow: function(options) {
-    		$.post(options.sModuleURL + 'add', function(sText, sStatus, oJSReq) {
+    		var oSubmitData = {};
+
+    		//add values to oSubmitData
+			if (options.submitdata_add) {
+				if ($.isFunction(options.submitdata_add)) {
+					//pass DOM object to callback
+                    $.extend(oSubmitData, options.submitdata_add(options.oTable));
+                }
+				else {
+					$.extend(oSubmitData, options.submitdata_add);
+                }
+			}
+
+    		$.post(options.sModuleURL + 'add', oSubmitData, function(sText, sStatus, oJSReq) {
     			$(options.oTable.fnGetNodes(options.oTable.fnAddData(oJSReq.responseJS)))
     				.children(':first').trigger($.editable.edit);
     		});
