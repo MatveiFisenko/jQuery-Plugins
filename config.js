@@ -3,7 +3,14 @@
  *
  */
 
-oDataTableDefaults = {
+var oModules = {
+	people: '/people/',
+	groups: '/groups/',
+	payments: '/payments/',
+	visits: '/visits/'
+};
+
+var oDataTableDefaults = {
 	"aaSorting": [[1, 'asc']],
 	//<"top"i>rt<"bottom"flp<"clear">
 	"sDom": '<"top"<"dtBar">fi>rt<"bottom"lp<"clear">',

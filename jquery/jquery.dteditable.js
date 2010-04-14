@@ -46,6 +46,9 @@
     	//if options are unset - make empty object
     	options = options || {};
 
+    	//we keep target only for compatibility with editable
+    	options.sModuleURL = target;
+
     	//if we pass DataTables object directly
     	if (this.fnUpdate) options.oTable = this;
     	//if we have no oTable - do nothing
@@ -57,7 +60,7 @@
     	this.data($.editable.sSelfName + 'iOptionsID', iOptionsID);
 
     	if (options.toolbar !== false) {
-    		$.editable.createToolbar(options.oTable);
+    		$.editable.createToolbar(options);
     	}
 
     	this.children('tbody').bind('click.' + $.editable.sSelfName, function(e) {
@@ -124,7 +127,7 @@
                     }
     			}
 
-    			$.post(target, oSubmitData, $.proxy(function (sText) {
+    			$.post(options.sModuleURL + 'update', oSubmitData, $.proxy(function (sText) {
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
 							sText = options.selectColumns[oSubmitData.sColumnName][parseInt(sText)];
@@ -228,20 +231,20 @@
 		},
 
     	//create toolbar
-    	createToolbar: function(oTable) {
-			oTable.parent().find('div.dtBar')
+    	createToolbar: function(options) {
+			options.oTable.parent().find('div.dtBar')
 				.html('<div class="ui-state-default ui-corner-all" style="padding: 4px;"><span class="ui-icon ui-icon-circle-plus"></span></div>')
 				.children().hover(
 		    		function() { $(this).addClass('ui-state-hover'); },
 		    		function() { $(this).removeClass('ui-state-hover'); }
 		    	)
-		    	.find('.ui-icon-circle-plus').click(function(){$.editable.addRow(oTable);});
+		    	.find('.ui-icon-circle-plus').click(function(){$.editable.addRow(options);});
     	},
 
     	//add new row
-    	addRow: function(oTable) {
-    		$.post(sModuleURL + 'add', function(sText, sStatus, oJSReq) {
-    			$(oTable.fnGetNodes(oTable.fnAddData(oJSReq.responseJS)))
+    	addRow: function(options) {
+    		$.post(options.sModuleURL + 'add', function(sText, sStatus, oJSReq) {
+    			$(options.oTable.fnGetNodes(options.oTable.fnAddData(oJSReq.responseJS)))
     				.children(':first').trigger($.editable.edit);
     		});
     	}
