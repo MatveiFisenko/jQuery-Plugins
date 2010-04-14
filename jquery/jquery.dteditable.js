@@ -33,6 +33,7 @@
  * possible change #example tbody td with #example tbody
  * possible change events click -> dblclick and vice versa
  * submit bug report about e.preventDefault() and e.stopPropagation() - it makes no sense when work with overlay;
+ * better work with select inputs
  *
  */
 
@@ -69,23 +70,51 @@
 //          e.preventDefault();//because overlays do not get click event
             e.stopPropagation();
 
-            oTD.data($.editable.sSelfName + 'sOldText', oTD[0].innerHTML)
-    			.html('<input type="text" value="' + oTD[0].innerHTML + '" />')
-    			.data($.editable.sSelfName + 'bEditing', true)
-    			.children().focus();
+            var options = $.editable.getStoredOptions.call(this);
+
+            //save current data
+            oTD.data($.editable.sSelfName + 'sOldText', oTD[0].innerHTML);
+
+            var sText, sColumnName = $.editable.getColumnName.call(oTD[0], options.oTable);
+            //work with special columns
+            if (sColumnName == 'sTypeName') {
+            	sText = '<select>';
+
+            	$.each(aTypes, function(key, value) {
+            		if (value == oTD[0].innerHTML) {
+            			sText += '<option value="' + key + '" selected="selected">' + value + '</option>';
+            		}
+            		else {
+            			sText += '<option value="' + key + '">' + value + '</option>';
+            		}
+            	});
+
+            	sText += '</select>';
+            }
+            else {
+            	sText = '<input type="text" value="' + oTD[0].innerHTML + '" />';
+            }
+
+            oTD.html(sText)
+            	.data($.editable.sSelfName + 'bEditing', true)
+            	.children().focus();
 
     		$.editable.setTimeout(oTD);
     	});
 
-    	this.children('tbody').bind('keydown.' + $.editable.sSelfName, function(e) {
-    		if (!$(e.target).is('input')) return;
+    	this.children('tbody').bind('keydown.' + $.editable.sSelfName + ' change.' + $.editable.sSelfName, function(e) {
+    		//if (change event and not select) OR not input - return
+    		if (e.type == 'change') {
+    			if (!$(e.target).is('select')) return;
+    		}
+    		else if (!$(e.target).is('input')) return;
 
     		//find current TD
     		var oTD = $(e.target.parentNode);
 
     		if (!oTD.data($.editable.sSelfName + 'bEditing')) return;
 
-    		if (e.which == 13) {//enter
+    		if (e.which == 13 || e.type == 'change') {//enter OR change
     			$.editable.clearTimeout(oTD);
 
     			var oSubmitData = {
@@ -93,7 +122,7 @@
     				value: e.target.value
     			};
 
-    			var options = $.editable.options[$(this.parentNode).data($.editable.sSelfName + 'iOptionsID')];
+    			var options = $.editable.getStoredOptions.call(this);
 
     			if (options.submitdata) {
     				if ($.isFunction(options.submitdata)) {
@@ -106,6 +135,9 @@
     			}
 
     			$.post(target, oSubmitData, $.proxy(function (sText) {
+	    				if (oSubmitData.sColumnName == 'sTypeName') {
+							sText = aTypes[parseInt(sText)];
+						}
     					$.editable.setText(oTD, sText);
 
     					if ($.isFunction(options.callback)) {
@@ -129,7 +161,7 @@
     		//find current TD
     		var oTD = $(e.target).is('td') ? e.target : e.target.parentNode;
 
-    		var options = $.editable.options[$(this.parentNode).data($.editable.sSelfName + 'iOptionsID')];
+    		var options = $.editable.getStoredOptions.call(this);
 
     		if (!options.oOverlay) {
     			if ($('#overlay').length) {//if we have overlay already - use it
@@ -168,6 +200,12 @@
     	},
     	setText: function(e, sText) {
     		e.html(sText || e.data($.editable.sSelfName + 'sOldText')).removeData($.editable.sSelfName + 'bEditing');
+    	},
+    	getStoredOptions: function() {
+    		return $.editable.options[$(this.parentNode).data($.editable.sSelfName + 'iOptionsID')];
+    	},
+    	getColumnName: function(oTable) {
+    		return oTable.fnSettings().aoColumns[oTable.fnGetPosition(this)[2]].sName;
     	},
 
     	//used as default options
