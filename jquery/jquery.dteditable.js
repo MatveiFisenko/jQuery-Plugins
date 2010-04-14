@@ -14,17 +14,18 @@
  *
  */
 /**
-  * Version 0.2
+  * Version 0.3
   *
   * '*' - mandatory
   * @name  DTEditable
   * @type  jQuery
-  * @param String	target				(POST) URL or function to send edited content to. *
-  * @param Hash		options				Additional options.
-  * @param Object	options[oTable] 	DataTables object. *
-  * @param Function	options[callback]	Function to run after submitting edited content.
-  * @param Hash		options[submitdata]	Extra parameters to send when submitting edited content. Can be function returning hash.
-  * @param bool		options[toolbar]	Create toolbar (default true).
+  * @param String	target					(POST) URL or function to send edited content to. *
+  * @param Hash		options					Additional options.
+  * @param Object	options[oTable] 		DataTables object. *
+  * @param Function	options[callback]		Function to run after submitting edited content.
+  * @param Hash		options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
+  * @param bool		options[toolbar]		Create toolbar (default true).
+  * @param Hash		options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
   *
   */
 
@@ -77,19 +78,8 @@
 
             var sText, sColumnName = $.editable.getColumnName.call(oTD[0], options.oTable);
             //work with special columns
-            if (sColumnName == 'sTypeName') {
-            	sText = '<select>';
-
-            	$.each(aTypes, function(key, value) {
-            		if (value == oTD[0].innerHTML) {
-            			sText += '<option value="' + key + '" selected="selected">' + value + '</option>';
-            		}
-            		else {
-            			sText += '<option value="' + key + '">' + value + '</option>';
-            		}
-            	});
-
-            	sText += '</select>';
+            if (options.selectColumns[sColumnName]) {
+            	sText = $.editable.makeSelect(options.selectColumns[sColumnName], oTD.data($.editable.sSelfName + 'sOldText'));
             }
             else {
             	sText = '<input type="text" value="' + oTD[0].innerHTML + '" />';
@@ -135,8 +125,9 @@
     			}
 
     			$.post(target, oSubmitData, $.proxy(function (sText) {
-	    				if (oSubmitData.sColumnName == 'sTypeName') {
-							sText = aTypes[parseInt(sText)];
+    					//if we edited special column
+	    				if (options.selectColumns[oSubmitData.sColumnName]) {
+							sText = options.selectColumns[oSubmitData.sColumnName][parseInt(sText)];
 						}
     					$.editable.setText(oTD, sText);
 
@@ -208,6 +199,22 @@
     		return oTable.fnSettings().aoColumns[oTable.fnGetPosition(this)[2]].sName;
     	},
 
+    	//make <select> editing
+    	makeSelect: function(aSelectValues, sCurrentValue) {
+    		sText = '<select>';
+        	$.each(aSelectValues, function(key, value) {
+        		if (value == sCurrentValue) {
+        			sText += '<option value="' + key + '" selected="selected">' + value + '</option>';
+        		}
+        		else {
+        			sText += '<option value="' + key + '">' + value + '</option>';
+        		}
+        	});
+        	sText += '</select>';
+
+        	return sText;
+    	},
+
     	//used as default options
     	defaultCallback: function(sValue, oTable) {
 			var aPos = oTable.fnGetPosition(this);
@@ -240,8 +247,8 @@
     	}
     };
 
-	//default options used
-    $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata };
+	//default options used, assign selectColumns to get rid of annoying 'check object before check object property'
+    $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {} };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);
