@@ -39,13 +39,17 @@
 (function($) {
 
     $.fn.editable = function(target, options) {
-    	//if table have tbody - apply editable only to it's contents
-    	if (this.children('tbody').length) {
-    		this.children('tbody').editable(target, options);
-    		return this;
-    	}
-
     	var iOptionsID = $.editable.options.length;
+
+    	//if options are unset - make empty object
+    	options = options || {};
+
+    	//if we pass DataTables object directly
+    	if (this.fnUpdate) options.oTable = this;
+    	//if we have no oTable - do nothing
+    	else if (!options.oTable) return false;
+
+    	//merge options with default ones
     	$.editable.options[iOptionsID] = $.extend({}, $.editable.defaultOptions, options);
 
     	this.data($.editable.sSelfName + 'iOptionsID', iOptionsID);
@@ -54,7 +58,7 @@
     		$.editable.createToolbar(options.oTable);
     	}
 
-    	this.bind('click.' + $.editable.sSelfName, function(e) {
+    	this.children('tbody').bind('click.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('td')) return;
 
     		//find current TD
@@ -73,7 +77,7 @@
     		$.editable.setTimeout(oTD);
     	});
 
-    	this.bind('keydown.' + $.editable.sSelfName, function(e) {
+    	this.children('tbody').bind('keydown.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('input')) return;
 
     		//find current TD
@@ -89,7 +93,7 @@
     				value: e.target.value
     			};
 
-    			var options = $.editable.options[$(this).data($.editable.sSelfName + 'iOptionsID')];
+    			var options = $.editable.options[$(this.parentNode).data($.editable.sSelfName + 'iOptionsID')];
 
     			if (options.submitdata) {
     				if ($.isFunction(options.submitdata)) {
@@ -119,13 +123,13 @@
     		}
     	});
 
-    	this.bind('dblclick.' + $.editable.sSelfName, function(e) {
+    	this.children('tbody').bind('dblclick.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('td, input')) return;
 
     		//find current TD
     		var oTD = $(e.target).is('td') ? e.target : e.target.parentNode;
 
-    		var options = $.editable.options[$(this).data($.editable.sSelfName + 'iOptionsID')];
+    		var options = $.editable.options[$(this.parentNode).data($.editable.sSelfName + 'iOptionsID')];
 
     		if (!options.oOverlay) {
     			if ($('#overlay').length) {//if we have overlay already - use it
