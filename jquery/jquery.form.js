@@ -167,7 +167,7 @@
 						oXHRWindow.document.body.appendChild(document.createElement('div'));
 					}
 
-					oXHRWindow.document.body.firstChild.update(oJSReq.responseText);
+					oXHRWindow.document.body.firstChild.update(oJSReq.responseJS.sPageContents);
 				}
 			}
 		}
