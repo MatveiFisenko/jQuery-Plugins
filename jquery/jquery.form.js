@@ -169,6 +169,10 @@
 
 					oXHRWindow.document.body.firstChild.update(oJSReq.responseJS.sPageContents);
 				}
+				//if we have new row for a table
+				else if (oJSReq.responseJS.aNewRow) {
+					$('table.display').trigger('eNewRow', [oJSReq.responseJS.aNewRow]);
+				}
 			}
 		}
 	};

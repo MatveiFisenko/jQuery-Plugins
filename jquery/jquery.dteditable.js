@@ -36,6 +36,7 @@
  * possible change events click -> dblclick and vice versa
  * submit bug report about e.preventDefault() and e.stopPropagation() - it makes no sense when work with overlay;
  * better work with select inputs
+ * use eventData in bind when work with toolbar etc
  *
  */
 
@@ -60,6 +61,7 @@
 
     	this.data($.editable.sSelfName + 'iOptionsID', iOptionsID);
 
+    	//create toolbar
     	if (options.toolbar !== false) {
     		$.editable.createToolbar(options);
     	}
@@ -158,23 +160,7 @@
 
     		var options = $.editable.getStoredOptions.call(this);
 
-    		if (!options.oOverlay) {
-    			if ($('#overlay').length) {//if we have overlay already - use it
-    				options.oOverlay = $('#overlay').overlay();
-    			}
-    			else {
-	    			options.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
-	    				top: '10%',
-	    				speed: 'fast',
-	    				closeOnClick: true,
-	    				api: true
-	    			});
-    			}
-    		}
-
-    		$('#overlay').load(options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
-
-    		options.oOverlay.load();
+    		$.editable.showOverlay(options, oTD);
     	});
 
     	return this;
@@ -219,6 +205,33 @@
         	return sText;
     	},
 
+    	showOverlay: function(options, oTD) {
+    		if (!options.oOverlay) {
+    			if ($('#overlay').length) {//if we have overlay already - use it
+    				options.oOverlay = $('#overlay').overlay();
+    			}
+    			else {
+	    			options.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
+	    				top: '10%',
+	    				speed: 'fast',
+	    				closeOnClick: true,
+	    				api: true
+	    			});
+    			}
+    		}
+
+    		//create normal 'show' overlay
+    		if (oTD) {
+    			$('#overlay').load(options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
+    		}
+    		//create modal dialog
+    		else {
+    			$('#overlay').load(options.sModuleURL + 'add/');
+    		}
+
+    		options.oOverlay.load();
+    	},
+
     	//used as default options
     	defaultCallback: function(sValue, oTable) {
 			var aPos = oTable.fnGetPosition(this);
@@ -238,12 +251,21 @@
 				.children().hover(
 		    		function() { $(this).addClass('ui-state-hover'); },
 		    		function() { $(this).removeClass('ui-state-hover'); }
-		    	)
-		    	.find('.ui-icon-circle-plus').click(function(){$.editable.addRow(options);});
+		    	);
+
+			if (options.toolbar == 'modal') {
+				options.oTable.parent().find('div.dtBar').find('.ui-icon-circle-plus').click(function(e) {
+		            e.stopPropagation();//stop propagation because overlay may recieve this event and close
+					$.editable.addRowModal(options);
+				});
+			}
+			else {
+				options.oTable.parent().find('div.dtBar').find('.ui-icon-circle-plus').click(function(){$.editable.addRowSampleData(options);});
+			}
     	},
 
-    	//add new row
-    	addRow: function(options) {
+    	//modal dialog
+    	addRowSampleData: function(options) {
     		var oSubmitData = {};
 
     		//add values to oSubmitData
@@ -258,9 +280,24 @@
 			}
 
     		$.post(options.sModuleURL + 'add', oSubmitData, function(sText, sStatus, oJSReq) {
-    			$(options.oTable.fnGetNodes(options.oTable.fnAddData(oJSReq.responseJS)))
-    				.children(':first').trigger($.editable.edit);
+    			$.editable.addRow(options, oJSReq.responseJS);
     		});
+    	},
+
+    	//modal dialog
+    	addRowModal: function(options) {
+    		$.editable.showOverlay(options);
+    		//custom event after successufull insert
+    		options.oTable.bind('eNewRow', function(e, aRowData) {
+    			options.oOverlay.close();
+    			$.editable.addRow(options, aRowData);
+    		});
+    	},
+
+    	//add new row
+    	addRow: function(options, aRowData) {
+   			$(options.oTable.fnGetNodes(options.oTable.fnAddData(aRowData)))
+			.children(':first').trigger($.editable.edit);
     	}
     };
 
