@@ -25,8 +25,9 @@
   * @param Function	options[callback]		Function to run after submitting edited content.
   * @param Hash		options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
   * @param Hash		options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash.
-  * @param bool		options[toolbar]		Create toolbar (default true).
+  * @param mixed	options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash		options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
+  * @param bool		options[showOverlay]	Create overlay on dblclick event. Default true.
   *
   */
 
@@ -152,6 +153,7 @@
     		}
     	});
 
+    	if (options.showOverlay)
     	this.children('tbody').bind('dblclick.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('td, input')) return;
 
@@ -259,7 +261,7 @@
 					$.editable.addRowModal(options);
 				});
 			}
-			else {
+			else if (options.toolbar !== false) {
 				options.oTable.parent().find('div.dtBar').find('.ui-icon-circle-plus').click(function(){$.editable.addRowSampleData(options);});
 			}
     	},
@@ -280,7 +282,8 @@
 			}
 
     		$.post(options.sModuleURL + 'add', oSubmitData, function(sText, sStatus, oJSReq) {
-    			$.editable.addRow(options, oJSReq.responseJS);
+    			($.editable.addRow(options, oJSReq.responseJS))
+    			.children(':first').trigger($.editable.edit);
     		});
     	},
 
@@ -296,13 +299,13 @@
 
     	//add new row
     	addRow: function(options, aRowData) {
-   			$(options.oTable.fnGetNodes(options.oTable.fnAddData(aRowData)))
-			.children(':first').trigger($.editable.edit);
+   			return $(options.oTable.fnGetNodes(options.oTable.fnAddData(aRowData)));
     	}
     };
 
 	//default options used, assign selectColumns to get rid of annoying 'check object before check object property'
-    $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {} };
+    $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {},
+    	showOverlay: true };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);
