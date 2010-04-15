@@ -27,7 +27,8 @@
   * @param Hash		options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash.
   * @param mixed	options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash		options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
-  * @param bool		options[showOverlay]	Create overlay on dblclick event. Default true.
+  * @param bool		options[allowDetails]	Create overlay on dblclick event. Default true.
+  * @param String	options[overlayType]	Used to specify overlay for already overlayed items.
   *
   */
 
@@ -153,7 +154,7 @@
     		}
     	});
 
-    	if ($.editable.options[iOptionsID].showOverlay)
+    	if ($.editable.options[iOptionsID].allowDetails)
     	this.children('tbody').bind('dblclick.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('td, input')) return;
 
@@ -305,7 +306,7 @@
 
 	//default options used, assign selectColumns to get rid of annoying 'check object before check object property'
     $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {},
-    	showOverlay: true };
+    	allowDetails: true };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);
