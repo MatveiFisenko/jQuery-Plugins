@@ -153,7 +153,7 @@
     		}
     	});
 
-    	if (options.showOverlay)
+    	if ($.editable.options[iOptionsID].showOverlay)
     	this.children('tbody').bind('dblclick.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('td, input')) return;
 
