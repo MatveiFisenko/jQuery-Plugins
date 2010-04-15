@@ -28,7 +28,7 @@
   * @param mixed	options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash		options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
   * @param bool		options[allowDetails]	Create overlay on dblclick event. Default true.
-  * @param String	options[overlayType]	Used to specify overlay for already overlayed items.
+  * @param String	options[overlayClass]	Used to specify overlay class. Default simple_overlay. Be carefull - it is used as #id too!
   *
   */
 
@@ -59,7 +59,7 @@
     	else if (!options.oTable) return false;
 
     	//merge options with default ones
-    	$.editable.options[iOptionsID] = $.extend({}, $.editable.defaultOptions, options);
+    	$.editable.options[iOptionsID] = options = $.extend({}, $.editable.defaultOptions, options);
 
     	this.data($.editable.sSelfName + 'iOptionsID', iOptionsID);
 
@@ -154,7 +154,7 @@
     		}
     	});
 
-    	if ($.editable.options[iOptionsID].allowDetails)
+    	if (options.allowDetails)
     	this.children('tbody').bind('dblclick.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('td, input')) return;
 
@@ -210,14 +210,16 @@
 
     	showOverlay: function(options, oTD) {
     		if (!options.oOverlay) {
-    			if ($('#overlay').length) {//if we have overlay already - use it
-    				options.oOverlay = $('#overlay').overlay();
+    			if ($('#' + options.overlayClass).length) {//if we have overlay already (made by other editable()) - use it
+    				options.oOverlay = $('#' + options.overlayClass).overlay();
     			}
     			else {
-	    			options.oOverlay = $('<div class="simple_overlay" id="overlay"></div>').appendTo('body').overlay({
+	    			options.oOverlay = $('<div class="' + options.overlayClass + '" id="' + options.overlayClass + '"></div>').appendTo('body')
+	    			.overlay({
 	    				top: '10%',
 	    				speed: 'fast',
 	    				closeOnClick: true,
+	    				oneInstance: false,
 	    				api: true
 	    			});
     			}
@@ -225,11 +227,11 @@
 
     		//create normal 'show' overlay
     		if (oTD) {
-    			$('#overlay').load(options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
+    			$('#' + options.overlayClass).load(options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
     		}
     		//create modal dialog
     		else {
-    			$('#overlay').load(options.sModuleURL + 'add/');
+    			$('#' + options.overlayClass).load(options.sModuleURL + 'add/');
     		}
 
     		options.oOverlay.load();
@@ -306,7 +308,7 @@
 
 	//default options used, assign selectColumns to get rid of annoying 'check object before check object property'
     $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {},
-    	allowDetails: true };
+    	allowDetails: true, overlayClass: 'simple_overlay' };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);
