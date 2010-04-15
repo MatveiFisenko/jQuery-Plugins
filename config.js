@@ -4,6 +4,7 @@
  */
 
 var oModules = {
+	index: '/index/',	
 	people: '/people/',
 	groups: '/groups/',
 	payments: '/payments/',
