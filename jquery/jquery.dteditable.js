@@ -137,9 +137,11 @@
     			}
 
     			$.post(options.sModuleURL + 'update', oSubmitData, $.proxy(function (sText, sStatus, oJSReq) {
+    					//get real new value
+    					sText = oJSReq.responseJS;
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
-							sText = options.selectColumns[oSubmitData.sColumnName][parseInt(oJSReq.responseJS)];
+							sText = options.selectColumns[oSubmitData.sColumnName][parseInt(sText)];
 						}
     					$.editable.setText(oTD, sText);
 
