@@ -4832,13 +4832,13 @@ jQuery.fn.extend({
 						jQuery("<div />")
 							// inject the contents of the document in, removing the scripts
 							// to avoid any 'Permission Denied' errors in IE
-							.append(res.responseText.replace(rscript, ""))
+							.append(res.responseJS.sPageContents.replace(rscript, ""))
 
 							// Locate the specified elements
 							.find(selector) :
 
 						// If not, just inject the full result
-						res.responseText );
+						res.responseJS.sPageContents );
 				}
 
 				if ( callback ) {
