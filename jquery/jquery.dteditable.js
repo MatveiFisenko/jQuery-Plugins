@@ -90,7 +90,7 @@
             	sText = $.editable.makeSelect(options.selectColumns[sColumnName], oTD.data($.editable.sSelfName + 'sOldText'));
             }
             else {
-            	sText = '<input type="text" value="' + oTD[0].innerHTML + '" />';
+            	sText = '<input type="text" class="ui-state-active ui-corner-all" value="' + oTD[0].innerHTML + '" />';
             }
 
             oTD.html(sText)
@@ -216,7 +216,7 @@
     			else {
 	    			options.oOverlay = $('<div class="' + options.overlayClass + '" id="' + options.overlayClass + '"></div>').appendTo('body')
 	    			.overlay({
-	    				top: '10%',
+	    				top: options.overlayClass == 'sub_overlay' ? '15%' : '10%',
 	    				speed: 'fast',
 	    				closeOnClick: true,
 	    				oneInstance: false,
