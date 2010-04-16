@@ -19,17 +19,17 @@
   * '*' - mandatory
   * @name  DTEditable
   * @type  jQuery
-  * @param String	target					(POST) URL or function to send edited content to. *
-  * @param Hash		options					Additional options.
-  * @param Object	options[oTable] 		DataTables object. *
-  * @param Function	options[callback]		Function to run after submitting edited content.
-  * @param Hash		options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
-  * @param Hash		options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash.
-  * @param mixed	options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
-  * @param Hash		options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
-  * @param bool		options[allowDetails]	Create overlay on dblclick event. Default true.
-  * @param String	options[overlayClass]	Used to specify overlay class. Default simple_overlay. Be carefull - it is used as #id too!
-  * @param Array	options[disableEdit]	Disable editing of several table columns. Starting from 0. Example: [0, 1].
+  * @param String		target					(POST) URL or function to send edited content to. *
+  * @param Hash			options					Additional options.
+  * @param Object		options[oTable] 		DataTables object. *
+  * @param Function		options[callback]		Function to run after submitting edited content.
+  * @param Hash			options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
+  * @param Hash			options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash.
+  * @param mixed		options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
+  * @param Hash			options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
+  * @param Bool			options[allowDetails]	Create overlay on dblclick event. Default true.
+  * @param String		options[overlayClass]	Used to specify overlay class. Default simple_overlay. Be carefull - it is used as #id too!
+  * @param Array/false	options[disableEdit]	Disable editing of several table columns. Starting from 0. Example: [0, 1]. If false - disable edit all.
   *
   */
 
@@ -69,6 +69,7 @@
     		$.editable.createToolbar(options);
     	}
 
+    	if (options.disableEdit !== true)
     	this.children('tbody').bind('click.' + $.editable.sSelfName, function(e) {
     		var oTD = $(e.target);
     		//if we clicked on not-td element
@@ -232,12 +233,12 @@
     		}
 
     		//create normal 'show' overlay
-    		if (oTD) {
+    		if (oTD.nodeName) {
     			$('#' + options.overlayClass).load(options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
     		}
     		//create modal dialog
     		else {
-    			$('#' + options.overlayClass).load(options.sModuleURL + 'add/');
+    			$('#' + options.overlayClass).load(options.sModuleURL + 'add/' + oTD);
     		}
 
     		options.oOverlay.load();
@@ -262,48 +263,39 @@
 				.children().hover(
 		    		function() { $(this).addClass('ui-state-hover'); },
 		    		function() { $(this).removeClass('ui-state-hover'); }
-		    	);
+		    	)
+				.find('.ui-icon-circle-plus').click(function(e){$.editable.addRowHandler(e, options);});
+    	},
+
+    	addRowHandler: function(e, options) {
+    		//parse submitdata
+    		var sSubmitData = '';
+    		if (options.submitdata_add) {
+    			sSubmitData = options.submitdata_add;
+
+				if ($.isFunction(sSubmitData)) {
+					//pass Datatables object to callback
+					sSubmitData = sSubmitData(options.oTable);
+                }
+				sSubmitData = '?' + $.param(sSubmitData);
+			}
 
 			if (options.toolbar == 'modal') {
-				options.oTable.parent().find('div.dtBar').find('.ui-icon-circle-plus').click(function(e) {
-		            e.stopPropagation();//stop propagation because overlay may recieve this event and close
-					$.editable.addRowModal(options);
-				});
+				e.stopPropagation();//stop propagation because overlay may recieve this event and close
+
+				$.editable.showOverlay(options, sSubmitData);
+	    		//custom event after successufull insert
+	    		options.oTable.bind('eNewRow', function(e, aRowData) {
+	    			options.oOverlay.close();
+	    			$.editable.addRow(options, aRowData);
+	    		});
 			}
-			else if (options.toolbar !== false) {
-				options.oTable.parent().find('div.dtBar').find('.ui-icon-circle-plus').click(function(){$.editable.addRowSampleData(options);});
+			else {
+				$.post(options.sModuleURL + 'add/' + sSubmitData, oSubmitData, function(sText, sStatus, oJSReq) {
+	    			($.editable.addRow(options, oJSReq.responseJS))
+	    			.children(':first').trigger($.editable.edit);
+	    		});
 			}
-    	},
-
-    	//modal dialog
-    	addRowSampleData: function(options) {
-    		var oSubmitData = {};
-
-    		//add values to oSubmitData
-			if (options.submitdata_add) {
-				if ($.isFunction(options.submitdata_add)) {
-					//pass DOM object to callback
-                    $.extend(oSubmitData, options.submitdata_add(options.oTable));
-                }
-				else {
-					$.extend(oSubmitData, options.submitdata_add);
-                }
-			}
-
-    		$.post(options.sModuleURL + 'add', oSubmitData, function(sText, sStatus, oJSReq) {
-    			($.editable.addRow(options, oJSReq.responseJS))
-    			.children(':first').trigger($.editable.edit);
-    		});
-    	},
-
-    	//modal dialog
-    	addRowModal: function(options) {
-    		$.editable.showOverlay(options);
-    		//custom event after successufull insert
-    		options.oTable.bind('eNewRow', function(e, aRowData) {
-    			options.oOverlay.close();
-    			$.editable.addRow(options, aRowData);
-    		});
     	},
 
     	//add new row
