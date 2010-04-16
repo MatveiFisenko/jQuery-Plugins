@@ -285,7 +285,8 @@
 				e.stopPropagation();//stop propagation because overlay may recieve this event and close
 
 				$.editable.showOverlay(options, sSubmitData);
-	    		//custom event after successufull insert
+	    		//custom event after successufull insert, bind only once
+				if (!(options.oTable.data('events') && options.oTable.data('events').eNewRow))
 	    		options.oTable.bind('eNewRow', function(e, aRowData) {
 	    			options.oOverlay.close();
 	    			$.editable.addRow(options, aRowData);
