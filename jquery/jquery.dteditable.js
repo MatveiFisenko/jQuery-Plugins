@@ -232,16 +232,19 @@
     			}
     		}
 
-    		//create normal 'show' overlay
+    		var sPath;
+    		//open normal 'show' overlay
     		if (oTD.nodeName) {
-    			$('#' + options.overlayClass).load(options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0]);
+    			sPath = options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0];
     		}
-    		//create modal dialog
+    		//open modal dialog
     		else {
-    			$('#' + options.overlayClass).load(options.sModuleURL + 'add/' + oTD);
+    			sPath = options.sModuleURL + 'add/' + oTD;
     		}
-
-    		options.oOverlay.load();
+    		$.get(sPath, function(sText, sStatus, oJS) {
+    			$('#' + options.overlayClass).html(oJS.responseJS.sPageContents);
+    			options.oOverlay.load();
+    		});
     	},
 
     	//used as default options
