@@ -264,11 +264,12 @@
 		    		function() { $(this).addClass('ui-state-hover'); },
 		    		function() { $(this).removeClass('ui-state-hover'); }
 		    	)
-				.find('.ui-icon-circle-plus').click(function(e){$.editable.addRowHandler(e, options);});
+				.find('.ui-icon-circle-plus').click(function(e){ $.editable.addRowHandler(e, options); });
     	},
 
+    	//do addRow action
     	addRowHandler: function(e, options) {
-    		//parse submitdata
+    		//parse submitdata, it will be added to request as query string
     		var sSubmitData = '';
     		if (options.submitdata_add) {
     			sSubmitData = options.submitdata_add;
