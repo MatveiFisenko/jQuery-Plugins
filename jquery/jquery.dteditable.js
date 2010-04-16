@@ -29,6 +29,7 @@
   * @param Hash		options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
   * @param bool		options[allowDetails]	Create overlay on dblclick event. Default true.
   * @param String	options[overlayClass]	Used to specify overlay class. Default simple_overlay. Be carefull - it is used as #id too!
+  * @param Array	options[disableEdit]	Disable editing of several table columns. Starting from 0. Example: [0, 1].
   *
   */
 
@@ -69,17 +70,20 @@
     	}
 
     	this.children('tbody').bind('click.' + $.editable.sSelfName, function(e) {
-    		if (!$(e.target).is('td')) return;
-
-    		//find current TD
     		var oTD = $(e.target);
+    		//if we clicked on not-td element
+    		if (!oTD.is('td')) return;
 
+    		var options = $.editable.getStoredOptions.call(this);
+
+    		//if current element is in disabled list
+    		if ($.inArray(oTD.prevAll().length, options.disableEdit) > -1) return;
+
+    		//if we already edit this element
     		if (oTD.data($.editable.sSelfName + 'bEditing')) return;
 
 //          e.preventDefault();//because overlays do not get click event
             e.stopPropagation();
-
-            var options = $.editable.getStoredOptions.call(this);
 
             //save current data
             oTD.data($.editable.sSelfName + 'sOldText', oTD[0].innerHTML);
