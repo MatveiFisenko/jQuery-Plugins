@@ -57,11 +57,14 @@
     	//if we have no oTable - do nothing
     	else if (!options.oTable) return false;
 
-    	//if we made it editable alreay
-    	if (options.oTable.data('events') && options.oTable.data('events')['keydown.' + $.editable.sSelfName]) return this;
+    	//if we made it editable already - return
+    	if (options.oTable.data($.editable.sSelfName)) return this;
 
     	//merge options with default ones
     	options = $.extend({}, $.editable.defaultOptions, options);
+
+    	//mark this table as editable
+    	options.oTable.data($.editable.sSelfName, true);
 
     	//create toolbar
     	if (options.toolbar !== false) {
