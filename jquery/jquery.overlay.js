@@ -92,7 +92,7 @@
     			overlay = $.overlay2.overlays[i];
 
     			//do not close if we clicked inside overlay OR overlay itself OR we clicked inside .sub_overlay
-    			if (overlay.has(et).length || et[0] == overlay[0] || et.parents().is('div.sub_overlay')) continue;
+    			if (overlay.has(et).length || et[0] == overlay[0] || et.parents('div.sub_overlay').length) continue;
 
     			overlay.hide();
     			$.overlay2.overlays.splice(i, 1);//remove this overlay
