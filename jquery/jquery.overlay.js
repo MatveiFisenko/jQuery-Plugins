@@ -100,6 +100,9 @@
     			//reduce pointer (because we removed one element from array) and check if it points to the last element, if so - return
     			if ((length = $.overlay2.overlays.length) == --i) return;
     		}
+
+    		//unbind event if no overlays left
+    		if (!$.overlay2.overlays.length) $(document).unbind("click.overlay").data('overlay2', false);
     	}
 
     };
