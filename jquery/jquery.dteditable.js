@@ -105,6 +105,7 @@
     		$.editable.setTimeout(oTD);
     	});
 
+    	if (options.disableEdit !== true)
     	this.children('tbody').bind('keydown.' + $.editable.sSelfName + ' change.' + $.editable.sSelfName, function(e) {
     		//if (change event and not select) OR not input - return
     		if (e.type == 'change') {
