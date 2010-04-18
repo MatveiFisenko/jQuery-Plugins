@@ -46,8 +46,6 @@
 (function($) {
 
     $.fn.editable = function(target, options) {
-    	var iOptionsID = $.editable.options.length;
-
     	//if options are unset - make empty object
     	options = options || {};
 
@@ -60,9 +58,7 @@
     	else if (!options.oTable) return false;
 
     	//merge options with default ones
-    	$.editable.options[iOptionsID] = options = $.extend({}, $.editable.defaultOptions, options);
-
-    	this.data($.editable.sSelfName + 'iOptionsID', iOptionsID);
+    	options = $.extend({}, $.editable.defaultOptions, options);
 
     	//create toolbar
     	if (options.toolbar !== false) {
@@ -74,8 +70,6 @@
     		var oTD = $(e.target);
     		//if we clicked on not-td element
     		if (!oTD.is('td')) return;
-
-    		var options = $.editable.getStoredOptions.call(this);
 
     		//if current element is in disabled list
     		if ($.inArray(oTD.prevAll().length, options.disableEdit) > -1) return;
@@ -125,8 +119,6 @@
     				value: e.target.value
     			};
 
-    			var options = $.editable.getStoredOptions.call(this);
-
     			if (options.submitdata) {
     				if ($.isFunction(options.submitdata)) {
     					//pass DOM object to callback
@@ -168,8 +160,6 @@
     		//find current TD
     		var oTD = $(e.target).is('td') ? e.target : e.target.parentNode;
 
-    		var options = $.editable.getStoredOptions.call(this);
-
     		$.editable.showOverlay(options, oTD);
     	});
 
@@ -177,7 +167,6 @@
     };
 
     $.editable = {
-    	options: [],
     	sSelfName: 'dteditable',
     	sTableID: null,
 
@@ -192,9 +181,6 @@
     	},
     	setText: function(e, sText) {
     		e.html(sText || e.data($.editable.sSelfName + 'sOldText')).removeData($.editable.sSelfName + 'bEditing');
-    	},
-    	getStoredOptions: function() {
-    		return $.editable.options[$(this.parentNode).data($.editable.sSelfName + 'iOptionsID')];
     	},
     	getColumnName: function(oTable) {
     		return oTable.fnSettings().aoColumns[oTable.fnGetPosition(this)[2]].sName;
