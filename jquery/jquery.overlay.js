@@ -23,6 +23,7 @@
 
 /*
  * TODO:
+ * optimize storage - now we have array of arrays with 1 element
  *
  */
 
@@ -59,7 +60,7 @@
 
 				//create only one event
 				if (!$(document).data('overlay2')) {
-					$(document).bind('click.overlay', $.overlay2.checkOpen);
+					$(document).bind('click.overlay', $.overlay2.closeOverlays);
 					$(document).data('overlay2', true);
 				}
 
@@ -80,10 +81,10 @@
     };
 
     $.overlay2 = {
-    		overlays: [],
+    	overlays: [],
 
 
-    	checkOpen: function(e) {
+    	closeOverlays: function(e) {
     		console.log('event');
     		var et = $(e.target);
 
