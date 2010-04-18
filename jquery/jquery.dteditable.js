@@ -212,11 +212,11 @@
     	showOverlay: function(options, oTD) {
     		if (!options.oOverlay) {
     			if ($('#' + options.overlayClass).length) {//if we have overlay already (made by other editable()) - use it
-    				options.oOverlay = $('#' + options.overlayClass).overlay();
+    				options.oOverlay = $('#' + options.overlayClass).overlay2();
     			}
     			else {
 	    			options.oOverlay = $('<div class="' + options.overlayClass + '" id="' + options.overlayClass + '"></div>').appendTo('body')
-	    			.overlay({
+	    			.overlay2({
 	    				top: options.overlayClass == 'sub_overlay' ? '15%' : '10%',
 	    				speed: 'fast',
 	    				closeOnClick: true,
