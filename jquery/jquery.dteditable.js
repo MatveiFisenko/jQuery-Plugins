@@ -27,9 +27,9 @@
   * @param Hash			options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash. Property _sTableID is reserved for internal use.
   * @param mixed		options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash			options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
-  * @param Bool			options[allowDetails]	Create overlay on dblclick event. Default true.
+  * @param Bool			options[disableDetails]	Create 'show' overlay on dblclick event. Default false.
   * @param String		options[overlayClass]	Used to specify overlay class. Default simple_overlay. Be carefull - it is used as #id too!
-  * @param Array/false	options[disableEdit]	Disable editing of several table columns. Starting from 0. Example: [0, 1]. If false - disable edit all.
+  * @param Array/bool	options[disableEdit]	Disable editing of several table columns. Starting from 0. Example: [0, 1]. If true - disable edit all. Default false.
   *
   */
 
@@ -159,7 +159,7 @@
     		}
     	});
 
-    	if (options.allowDetails)
+    	if (options.disableDetails !== true)
     	this.children('tbody').bind('dblclick.' + $.editable.sSelfName, function(e) {
     		if (!$(e.target).is('td, input')) return;
 
@@ -313,7 +313,7 @@
 
 	//default options used, assign selectColumns to get rid of annoying 'check object before check object property'
     $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {},
-    	allowDetails: true, overlayClass: 'simple_overlay' };
+    	overlayClass: 'simple_overlay' };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);
