@@ -24,7 +24,7 @@
   * @param Object		options[oTable] 		DataTables object. *
   * @param Function		options[callback]		Function to run after submitting edited content.
   * @param Hash			options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
-  * @param Hash			options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash.
+  * @param Hash			options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash. Property _sTableID is reserved for internal use.
   * @param mixed		options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash			options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
   * @param Bool			options[allowDetails]	Create overlay on dblclick event. Default true.
@@ -179,6 +179,7 @@
     $.editable = {
     	options: [],
     	sSelfName: 'dteditable',
+    	sTableID: null,
 
 
    		setTimeout: function(e) {
@@ -242,6 +243,13 @@
     			sPath = options.sModuleURL + 'add/' + oTD;
     		}
     		$.get(sPath, function(sText, sStatus, oJS) {
+    			//check if we sent request with table ID. Used for form sending event to this specific table.
+    			var sTableID = oJS._openArgs.url.match(/_sTableID=([a-z0-9]+)/i);
+    			//limitation - only one modal add dialog in a moment!
+    			if (sTableID) {
+    				$.editable.sTableID = sTableID[1];
+    			}
+
     			$('#' + options.overlayClass).html(oJS.responseJS.sPageContents);
     			options.oOverlay.load();
     		});
@@ -273,7 +281,7 @@
     	//do addRow action
     	addRowHandler: function(e, options) {
     		//parse submitdata, it will be added to request as query string
-    		var sSubmitData = '';
+    		var sSubmitData = {};
     		if (options.submitdata_add) {
     			sSubmitData = options.submitdata_add;
 
@@ -281,8 +289,10 @@
 					//pass Datatables object to callback
 					sSubmitData = sSubmitData(options.oTable);
                 }
-				sSubmitData = '?' + $.param(sSubmitData);
 			}
+    		//set table id - we use it in form for sending event to this specific table
+			sSubmitData._sTableID = options.oTable[0].id;
+			sSubmitData = '?' + $.param(sSubmitData);
 
 			if (options.toolbar == 'modal') {
 				e.stopPropagation();//stop propagation because overlay may recieve this event and close
