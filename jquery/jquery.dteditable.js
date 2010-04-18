@@ -57,6 +57,9 @@
     	//if we have no oTable - do nothing
     	else if (!options.oTable) return false;
 
+    	//if we made it editable alreay
+    	if (options.oTable.data('events') && options.oTable.data('events')['keydown.' + $.editable.sSelfName]) return this;
+
     	//merge options with default ones
     	options = $.extend({}, $.editable.defaultOptions, options);
 
