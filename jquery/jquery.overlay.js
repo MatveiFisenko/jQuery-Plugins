@@ -34,9 +34,7 @@
 (function($) {
 
     $.fn.overlay2 = function(options) {
-    	options = $.extend({}, $.overlay2.defaultOptions, options);
-
-    	return { overlay: this, options: options, load: $.overlay2.load };
+    	return { overlay: this, options: $.extend({}, $.overlay2.defaultOptions, options), load: $.overlay2.load };
     };
 
     $.overlay2 = {
