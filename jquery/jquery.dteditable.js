@@ -141,7 +141,8 @@
     					sText = oJSReq.responseJS;
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
-							sText = options.selectColumns[oSubmitData.sColumnName][parseInt(sText)];
+	    					//selectColumns can contain hash, to check if sText is string
+							sText = options.selectColumns[oSubmitData.sColumnName][ isNaN(sText) ? sText : parseInt(sText) ];
 						}
     					$.editable.setText(oTD, sText);
 
