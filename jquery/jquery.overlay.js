@@ -34,7 +34,7 @@
 (function($) {
 
     $.fn.overlay2 = function(options) {
-    	return { overlay: this, options: $.extend({}, $.overlay2.defaultOptions, options), load: $.overlay2.load };
+    	return { overlay: this, options: $.extend({}, $.overlay2.defaultOptions, options), load: $.overlay2.load, close: $.overlay2.close };
     };
 
     $.overlay2 = {
@@ -69,6 +69,16 @@
 			}
 		},
 
+		close: function(overlay, i) {
+			//can be called as object method
+			if (!arguments.length) {
+				overlay = this.overlay;
+				i = $.inArray(this.overlay, $.overlay2.overlays);
+			}
+			overlay.hide();
+			$.overlay2.overlays.splice(i, 1);//remove this overlay
+		},
+
     	checkOverlays: function(e) {
     		for (var i = 0, length = $.overlay2.overlays.length, et = $(e.target), overlay; i < length; i++) {
     			overlay = $.overlay2.overlays[i];
@@ -76,8 +86,7 @@
     			//do not close if we clicked inside overlay OR overlay itself OR we clicked inside .sub_overlay
     			if (overlay.has(et).length || et[0] == overlay[0] || et.parents('div.sub_overlay').length) continue;
 
-    			overlay.hide();
-    			$.overlay2.overlays.splice(i, 1);//remove this overlay
+    			$.overlay2.close(overlay, i);
 
     			//reduce pointer and iterator (because we removed one element from array) and check if it points to the last element, if so - return
     			if (length-- == i--) return;
