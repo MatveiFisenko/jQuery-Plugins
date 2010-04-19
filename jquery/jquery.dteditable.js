@@ -212,17 +212,11 @@
     	showOverlay: function(options, oTD) {
     		if (!options.oOverlay) {
     			if ($('#' + options.overlayClass).length) {//if we have overlay already (made by other editable()) - use it
-    				options.oOverlay = $('#' + options.overlayClass).overlay2();
+    				options.oOverlay = $('#' + options.overlayClass).overlay2({ top: options.overlayClass == 'sub_overlay' ? '15%' : '10%' });
     			}
     			else {
 	    			options.oOverlay = $('<div class="' + options.overlayClass + '" id="' + options.overlayClass + '"></div>').appendTo('body')
-	    			.overlay2({
-	    				top: options.overlayClass == 'sub_overlay' ? '15%' : '10%',
-	    				speed: 'fast',
-	    				closeOnClick: true,
-	    				oneInstance: false,
-	    				api: true
-	    			});
+	    			.overlay2({ top: options.overlayClass == 'sub_overlay' ? '15%' : '10%' });
     			}
     		}
 
