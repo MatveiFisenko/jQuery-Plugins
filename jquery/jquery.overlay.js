@@ -67,7 +67,7 @@
 
 			//can be miss because click events may be stopped somewhere
 			if ($.inArray(this.overlay, $.overlay2.overlays) < 0) {
-				$.overlay2.overlays[$.overlay2.overlays.length] = this.overlay;
+				$.overlay2.overlays.push(this.overlay);
 			}
 		},
 
