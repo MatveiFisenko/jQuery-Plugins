@@ -13,12 +13,15 @@
  *
  */
 /**
-  * Version 0.1
+  * Version 0.2
   *
   * '*' - mandatory
   * @name  Overlay
   * @type  jQuery
   * @param Hash			options					Additional options.
+  * @param string		options[top]			Vertical position. Default '10%' from top.
+  * @param string		options[left]			Horizontal position. Default 'center'.
+  *
   */
 
 /*
@@ -31,65 +34,45 @@
 (function($) {
 
     $.fn.overlay2 = function(options) {
-    	var w = $(window);
+    	options = $.extend({}, $.overlay2.defaultOptions, options);
 
-    	function overlay_c(obj, options) {
-    		this.overlay = obj;
-    		this.options = $.extend({}, $.overlay2.defaultOptions, options);
-
-    		this.load = function() {
-    			var top, left;
-
-    			// get overlay dimensions
-    			console.log('load');
-				var oWidth = this.overlay.outerWidth({margin:true});
-				var oHeight = this.overlay.outerHeight({margin:true});
-
-    			if (typeof this.options.top == 'string')  {
-					top = this.options.top == 'center' ? Math.max((w.height() - oHeight) / 2, 0) :
-						parseInt(this.options.top, 10) / 100 * w.height();
-				}
-
-    			if (this.options.left == 'center') { left = Math.max((w.width() - oWidth) / 2, 0); }
-
-    			top += w.scrollTop();
-				left += w.scrollLeft();
-
-				// position overlay
-				this.overlay.css({top: top, left: left, position: 'absolute'});
-				this.overlay.show();
-
-				//create only one event
-				if (!$(document).data('overlay2')) {
-					$(document).bind('click.overlay', $.overlay2.closeOverlays);
-					$(document).data('overlay2', true);
-				}
-
-				//can be miss because click events may be stopped somewhere
-				if ($.inArray(this.overlay, $.overlay2.overlays) < 0) {
-					$.overlay2.overlays[$.overlay2.overlays.length] = this.overlay;
-				}
-			};
-
-//			this.hide = function() {
-//				this.overlay.hide();
-//			};
-
-    		return this;
-    	}
-
-    	return new overlay_c(this, options);
+    	return { overlay: this, options: options, load: $.overlay2.load };
     };
 
     $.overlay2 = {
     	overlays: [],
 
+    	load: function() {
+			var top, left, w = $(window),
+			//get overlay dimensions
+			oWidth = this.overlay.outerWidth({ margin:true }), oHeight = this.overlay.outerHeight({ margin:true });
 
-    	closeOverlays: function(e) {
-    		console.log('event');
-    		var et = $(e.target);
+			if (typeof this.options.top == 'string') {
+				top = this.options.top == 'center' ? Math.max((w.height() - oHeight) / 2, 0) :
+					parseInt(this.options.top, 10) / 100 * w.height();
+			}
 
-    		for (var i = 0, length = $.overlay2.overlays.length, overlay; i < length; i++) {
+			if (this.options.left == 'center') left = Math.max((w.width() - oWidth) / 2, 0);
+
+			top += w.scrollTop();
+			left += w.scrollLeft();
+
+			// position overlay
+			this.overlay.css({ top: top, left: left }).show();
+
+			//create only one event
+			if (!$(document).data('overlay2')) {
+				$(document).bind('click.overlay', $.overlay2.checkOverlays).data('overlay2', true);
+			}
+
+			//can be miss because click events may be stopped somewhere
+			if ($.inArray(this.overlay, $.overlay2.overlays) < 0) {
+				$.overlay2.overlays[$.overlay2.overlays.length] = this.overlay;
+			}
+		},
+
+    	checkOverlays: function(e) {
+    		for (var i = 0, length = $.overlay2.overlays.length, et = $(e.target), overlay; i < length; i++) {
     			overlay = $.overlay2.overlays[i];
 
     			//do not close if we clicked inside overlay OR overlay itself OR we clicked inside .sub_overlay
@@ -98,8 +81,8 @@
     			overlay.hide();
     			$.overlay2.overlays.splice(i, 1);//remove this overlay
 
-    			//reduce pointer (because we removed one element from array) and check if it points to the last element, if so - return
-    			if ((length = $.overlay2.overlays.length) == --i) return;
+    			//reduce pointer and iterator (because we removed one element from array) and check if it points to the last element, if so - return
+    			if (length-- == i--) return;
     		}
 
     		//unbind event if no overlays left
