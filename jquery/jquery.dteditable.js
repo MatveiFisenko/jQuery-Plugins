@@ -290,7 +290,7 @@
 				if (!(options.oTable.data('events') && options.oTable.data('events').eNewRow))
 	    		options.oTable.bind('eNewRow', function(e, aRowData) {
 	    			options.oOverlay.close();
-	    			$.editable.addRow(options, aRowData);
+	    			($.editable.addRow(options, aRowData)).addClass('ui-state-highlight');
 	    		});
 			}
 			else {
@@ -303,7 +303,7 @@
 
     	//add new row
     	addRow: function(options, aRowData) {
-   			return $(options.oTable.fnGetNodes(options.oTable.fnAddData(aRowData)));
+   			return $(options.oTable.fnAddDataAndDisplay(aRowData).nTr);
     	}
     };
 
