@@ -95,7 +95,7 @@
             	sText = $.editable.makeSelect(options.selectColumns[sColumnName], oTD.data($.editable.sSelfName + 'sOldText'));
             }
             else {
-            	sText = '<input type="text" class="ui-state-active ui-corner-all" value="' + oTD[0].innerHTML + '" />';
+            	sText = '<input type="text" class="ui-state-active ui-corner-all" value="' + oTD[0].innerHTML + '" style="width: ' + oTD.width() + 'px;" />';
             }
 
             oTD.html(sText)
