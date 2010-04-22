@@ -171,12 +171,16 @@
     		$.editable.showOverlay(options, oTD);
     	});
 
+    	//bind event for handling table row update calls
+    	$.editable.bindTableRowEvent(options);
+
     	return this;
     };
 
     $.editable = {
     	sSelfName: 'dteditable',
     	sTableID: null,
+    	sParentTableID: null,
 
 
    		setTimeout: function(e) {
@@ -224,7 +228,8 @@
     		var sPath;
     		//open normal 'show' overlay
     		if (oTD.nodeName) {
-    			sPath = options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0];
+    			//send table ID as param. Used if we edit main object in show dialog
+    			sPath = options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0] + '?' + $.param({ _sParentTableID: options.oTable[0].id });
     		}
     		//open modal dialog
     		else {
@@ -236,6 +241,13 @@
     			//limitation - only one modal add dialog in a moment!
     			if (sTableID) {
     				$.editable.sTableID = sTableID[1];
+    			}
+
+    			//check if we sent request with table ID. Used for form sending event to this specific table.
+    			var sParentTableID = oJS._openArgs.url.match(/_sParentTableID=([a-z0-9]+)/i);
+    			//limitation - only one show dialog in a moment!
+    			if (sParentTableID) {
+    				$.editable.sParentTableID = sParentTableID[1];
     			}
 
     			$('#' + options.overlayClass).html(oJS.responseJS.sPageContents);
@@ -286,12 +298,7 @@
 				e.stopPropagation();//stop propagation because overlay may recieve this event and close
 
 				$.editable.showOverlay(options, sSubmitData);
-	    		//custom event after successufull insert, bind only once
-				if (!(options.oTable.data('events') && options.oTable.data('events').eNewRow))
-	    		options.oTable.bind('eNewRow', function(e, aRowData) {
-	    			options.oOverlay.close();
-	    			($.editable.addRow(options, aRowData)).addClass('ui-state-highlight');
-	    		});
+				//all processing will be held in bindTableRowEvent
 			}
 			else {
 				$.post(options.sModuleURL + 'add/' + sSubmitData, oSubmitData, function(sText, sStatus, oJSReq) {
@@ -304,6 +311,28 @@
     	//add new row
     	addRow: function(options, aRowData) {
    			return $(options.oTable.fnAddDataAndDisplay(aRowData).nTr);
+    	},
+    	//edit existing row
+    	editRow: function(options, aRowData) {
+    		var iPosition = options.oTable.fnGetPositionByValue(aRowData[0], 0);
+    		options.oTable.fnUpdate(aRowData, iPosition, false);
+   			return $(options.oTable.fnGetNodes(iPosition));
+    	},
+
+    	//bind event used for row adding/editing
+    	bindTableRowEvent: function(options) {
+    		//custom event after successufull insert, bind only once
+			if (!(options.oTable.data('events') && options.oTable.data('events').eNewRow))
+    		options.oTable.bind('eNewRow', function(e, aRowData, bEdit) {
+    			//see jquery.form.js
+    			if (bEdit) {
+    				$.editable.editRow(options, aRowData);
+    			}
+    			else {
+    				options.oOverlay.close();
+    				($.editable.addRow(options, aRowData)).addClass('ui-state-highlight');
+    			}
+    		});
     	}
     };
 
