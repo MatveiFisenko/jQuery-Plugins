@@ -150,6 +150,8 @@
     						//pass DOM object to callback
     						options.callback.call(oTD[0], sText, options.oTable);
     					}
+
+    					$.notify.show('updated');
     				}, oTD));
     		}
     		else if (e.which == 27) {//esc
@@ -304,6 +306,8 @@
 				$.post(options.sModuleURL + 'add/' + sSubmitData, oSubmitData, function(sText, sStatus, oJSReq) {
 	    			($.editable.addRow(options, oJSReq.responseJS))
 	    			.children(':first').trigger($.editable.edit);
+
+	    			$.notify.show('added');
 	    		});
 			}
     	},
@@ -327,10 +331,14 @@
     			//see jquery.form.js
     			if (bEdit) {
     				$.editable.editRow(options, aRowData);
+
+    				$.notify.show('updated');
     			}
     			else {
     				options.oOverlay.close();
     				($.editable.addRow(options, aRowData)).addClass('ui-state-highlight');
+
+    				$.notify.show('added');
     			}
     		});
     	}
