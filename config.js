@@ -4,7 +4,7 @@
  */
 
 var oModules = {
-	index: '/index/',	
+	index: '/index/',
 	people: '/people/',
 	groups: '/groups/',
 	payments: '/payments/',
@@ -35,5 +35,6 @@ var oDataTableDefaults = {
 		}
 	},
 //	"bProcessing": true
-	"bJQueryUI": false
+	"bJQueryUI": false,
+	"bAutoWidth": false
 };
