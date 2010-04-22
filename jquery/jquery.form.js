@@ -177,6 +177,14 @@
 					}
 
 				}
+				//if we have edited row for a table
+				else if (oJSReq.responseJS.aEditRow) {
+					//send event only if table is specified, see jquery.editable.js
+					if ($.editable.sParentTableID) {
+						$('#' + $.editable.sParentTableID).trigger('eNewRow', [oJSReq.responseJS.aEditRow, true]);
+						alert('Операция выполнена успешно!');
+					}
+				}
 			}
 		}
 	};
