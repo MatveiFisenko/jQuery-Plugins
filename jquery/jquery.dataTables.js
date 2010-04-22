@@ -5211,4 +5211,15 @@
 		};
 	};
 
+	// fast search for sInput in iColumn in table data. Return record index. Used in editable.
+	$.fn.dataTableExt.oApi.fnGetPositionByValue = function ( oSettings, sInput, iColumn )
+	{
+		for (var i = 0, length = oSettings.aoData.length; i < length; i++) {
+			if (oSettings.aoData[i]._aData[iColumn] == sInput) {
+				return i;
+			}
+		}
+		return false;
+	};
+
 })(jQuery);
