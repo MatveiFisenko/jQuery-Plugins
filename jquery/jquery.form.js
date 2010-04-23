@@ -33,22 +33,22 @@
 
 (function($) {
 
-	$.fn.form = function(aOptions) {
+	$.fn.form = function(options) {
+		//merge options with default ones, if options are unset - make empty object
+		options = $.extend({}, $.form.defaultOptions, options || {});
+
 		//store settings
-		this.data('form.aOptions', $.form.setOptions(aOptions));
+		this.data('form.aOptions', options);
 
 		this.submit(function(e) {
-			var aStoredSettings = $(this).data('form.aOptions');
-
 			//run pre-submit handler
-			if (aStoredSettings.fBeforeHandler) {
-				aStoredSettings.fBeforeHandler($(this));
+			if (options.fBeforeHandler) {
+				options.fBeforeHandler(this);
 			}
 
 			$.form.toggleButtons.call(this);
 
-			$.post(this.action, this, $.proxy(aStoredSettings.fHandler, this));
-
+			$.post(this.action, this, $.proxy(options.fHandler, this));
 			return false;
 		});
 
@@ -56,29 +56,6 @@
 	};
 
 	$.form = {
-		//set custom options (handlers)
-		setOptions: function(aOptions) {
-			//set default options
-			if (!aOptions) {
-				return { fHandler: $.form.ajaxSuccess };
-			}
-
-			var aStoredOptions = {};
-
-			//trying to set custom handlers
-			if ($.isFunction(aOptions.fBeforeHandler)) {
-				aStoredOptions.fBeforeHandler = aOptions.fBeforeHandler;
-			}
-			if ($.isFunction(aOptions.fBeforeHandler)) {
-				aStoredOptions.fAfterHandler = aOptions.fBeforeHandler;
-			}
-			if ($.isFunction(aOptions.fHandler)) {
-				aStoredOptions.fHandler = aOptions.fHandler;
-			}
-
-			return aStoredOptions;
-		},
-
 		//show text errors messages
 		showErrors: function(oResponse) {
 			if (!$(this).children('div.ui-state-error').length) {
@@ -106,7 +83,7 @@
 
 		//toggle possible submit buttons for this form
 		toggleButtons: function() {
-			$(this).find('input[type=submit], input[type=button]').each(function() {
+			$(this).find('input[type=submit], button').each(function() {
 				this.disabled = !this.disabled;
 			});
 			//or like this
@@ -190,5 +167,7 @@
 			}
 		}
 	};
+
+	$.form.defaultOptions = { fHandler: $.form.ajaxSuccess };
 
 })(jQuery);
