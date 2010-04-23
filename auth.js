@@ -1,5 +1,5 @@
 function makeLoginHash(f) {
-	f.p.value = hex_hmac_sha256(f.c.value, hex_sha256(f.pass.value));
+	f.p.value = hex_hmac_sha256(f.c.value, hex_sha256(f.sPassword.value));
 	return true;
 }
 
