@@ -1,6 +1,6 @@
 /*
  * notify - jQuery notifying library.
- * Ported from xhrForm.
+ * Show test for 1500 ms.
  *
  * Copyright (c) 2010 mot <2matvei@gmail.com>
  *
@@ -15,7 +15,9 @@
   *
   * @name  notify
   * @type  jQuery
-  * @param Hash		options					additional options
+  * @param String		mText					Text to show. Can be hash key, see 'messages'.
+  * @param Bool			bPersistent				Do not hide message after 1500 ms. Default false.
+  * @param jQuery/DOM	mPlace					Div where to show text. Default is div.notify appended to document.body.
   *
   */
 
@@ -28,12 +30,11 @@
 
 	$.notify = {
 		obj: null,
+		debugObg: null,
 		messages: { updated: 'Информация обновлена.', added: 'Новая запись добавлена.', success: 'Операция выполнена успешно!', error: 'Произошла ошибка, попробуйте ещё раз позднее.' },
 
 
-		show: function(mText, bError, mPlace) {
-			bError = !!bError;//convert to bool
-
+		show: function(mText, bPersistent, mPlace) {
 			if (mPlace) {
 				$.notify.obj = $(mPlace);
 			}
@@ -41,7 +42,20 @@
 				$.notify.obj = $('<div class="notify ui-state-highlight ui-corner-all"></div>').appendTo(document.body);
 			}
 
-			$.notify.obj.toggleClass('ui-state-error', bError).html($.notify.messages[mText] || mText).show().delay(1500).fadeOut();
+			$.notify.obj.toggleClass('ui-state-error', mText === 'error' ? true : false).html($.notify.messages[mText] || mText).show().delay(1500).fadeOut();
+
+			if (bPersistent) {
+				//clear effects queue
+				$.notify.obj.queue([]);
+			}
+		},
+
+		showDebug: function(sText) {
+			if (!$.notify.debugObg) {
+				$.notify.debugObg = $('<div id="debug"></div>').appendTo(document.body);
+			}
+
+			$.notify.debugObg.prepend('<pre>' + sText + '</pre>');
 		}
 	};
 
