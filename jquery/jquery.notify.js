@@ -46,7 +46,7 @@
 
 			if (bPersistent) {
 				//clear effects queue
-				$.notify.obj.queue([]);
+				$.notify.obj.clearQueue();
 			}
 		},
 
