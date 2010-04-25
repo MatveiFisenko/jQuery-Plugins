@@ -119,19 +119,19 @@
 				}
 
 				if (oJSReq.responseJS.reload) {
-					$.notify.show('sucess');
+					$.notify.show('success');
 					window.location.reload();
 				}
 				else if (oJSReq.responseJS.ok) {
 					if (oJSReq.responseJS.ok == 1) {
-						$.notify.show('sucess');
+						$.notify.show('success');
 					}
 					else {
 						$.notify.show(oJSReq.responseJS.ok);
 					}
 				}
 				else if (oJSReq.responseJS.location) {
-					$.notify.show('sucess');
+					$.notify.show('success');
 					//if location is the same page.
 					if (window.location.pathname + window.location.search == oJSReq.responseJS.location) {
 						oJSReq.responseJS.location += '?' + (new Date()).getTime();
