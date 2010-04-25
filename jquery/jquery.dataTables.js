@@ -689,7 +689,7 @@
 			{
 				return 'numeric';
 			}
-			else if ( typeof sData.charAt != 'function' )
+			else if ( sData === null || typeof sData.charAt != 'function' )
 			{
 				return null;
 			}
