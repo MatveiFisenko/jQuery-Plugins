@@ -24,6 +24,7 @@
 
 /*
  * TODO:
+ * Add history support for lower level tabs - like /admin/timeline
  *
  */
 
@@ -93,7 +94,7 @@
 		//history support
 		setInterval($.proxy(function() {
 			var h = location.hash.replace("#", "");
-			var oA = this.find('a').filter("[href=" + h + "]");
+			var oA = this.find('a[href=' + h + ']');
 
 			if (oA.length && h !== this.data('currentPath')) {
 				oA.trigger('click');
