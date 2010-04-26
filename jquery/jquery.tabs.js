@@ -30,7 +30,7 @@
 
 (function($) {
 
-	$.fn.tabs2 = function(container) {
+	$.fn.tabs = function(container) {
 		//return false if not container supplied
 		if (!container) return false;
 
