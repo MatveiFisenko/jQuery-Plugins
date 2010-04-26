@@ -39,7 +39,7 @@
 
 		this.data('tabs', true);
 
-		this.click(function(e) {
+		this.click(function(e, bNoLocationChange) {
 			var oA = $(e.target);
 			//if not href
 			if (!oA.is('a')) return;
@@ -53,8 +53,12 @@
 			});
 
 			oA.parent().addClass('current').siblings().removeClass('current');
+
 			//start history plugin
-			location.hash = sPath.replace("#", "");
+			if (!bNoLocationChange) {
+				//actually we do not need this replace, left for comapatibility
+				location.hash = sPath.replace("#", "");
+			}
 
 			return false;
 		});
@@ -62,8 +66,8 @@
 		//try to open tab from location
 		this.find('a').each(function(i, element) {
 			//if location.hash is empty, it simple matches the first href
-			if ($(this).attr('href').search(location.hash.replace("#", "")) > -1) {
-				$(this).click();
+			if ($(this).attr('href').search(location.hash.replace("#", "")) > -1 || location.hash.replace("#", "").search($(this).attr('href')) > -1) {
+				$(this).trigger('click', [true]);//send true not to change location, because it can be used by lower level tabs
 				return false;
 			}
 		});
