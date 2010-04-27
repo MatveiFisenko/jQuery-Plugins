@@ -72,16 +72,33 @@
 		}
 
 		//history support
-		var self = this;
-		setInterval(function() {
+		$.tabs.setLocationInterval();
+
+		this.bind('eLocationChange', function() {
 			//find all A except current
-			$.tabs.findAndOpenTab(self.find('a[href!=' + self.data('sPath') + ']'));
-		}, 500);
+			$.tabs.findAndOpenTab($(this).find('a[href!=' + $(this).data('sPath') + ']'));
+		});
 
 		return this;
 	};
 
 	$.tabs = {
+		iIntervalID: null,
+
+
+		setLocationInterval: function() {
+			//make only one interval
+			if (!$.tabs.iIntervalID) {
+				var sLocation = location.hash;
+				$.tabs.iIntervalID = setInterval(function() {
+					if (location.hash !== sLocation) {
+						sLocation = location.hash;
+						$('ul.tabs').trigger('eLocationChange');
+					}
+				}, 500);
+			}
+		},
+
 		findAndOpenTab: function(oA) {
 			var bFind = true, sCurrentLocation = location.hash.replace("#", "");
 			oA.each(function() {
