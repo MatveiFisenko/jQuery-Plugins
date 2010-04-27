@@ -13,7 +13,7 @@
  *
  */
 /**
-  * Version 0.1
+  * Version 0.2
   *
   * '*' - mandatory
   * @name  Tab
@@ -24,7 +24,6 @@
 
 /*
  * TODO:
- * Add history support for lower level tabs - like /admin/timeline
  *
  */
 
@@ -39,7 +38,7 @@
 
 		this.data('tabs', true);
 
-		this.click(function(e, bWaitBeforeChange) {
+		this.click(function(e, bNoChange) {
 			var oA = $(e.target);
 			//if not href
 			if (!oA.is('a')) return;
@@ -54,58 +53,51 @@
 
 			oA.parent().addClass('current').siblings().removeClass('current');
 
-			//be neat, clean if we had one before
-			if ($.tabs.iTimeOutID) {
-				//we clean timeout because we do not want to get first-level tab sPath as history point
-				clearTimeout($.tabs.iTimeOutID);
-				$.tabs.iTimeOutID = null;
-			}
-
-			//if we have first load trigger event
-			if (bWaitBeforeChange) {
-				//we do so because we can have lower level tabs, which need original location.hash.
-				//but we need to change location.hash for history plugin support, if no lower tabs found.
-				$.tabs.iTimeOutID = setTimeout(function() { location.hash = sPath; }, 1000);
-			}
-			//change location hash in a moment on natural click event
-			else {
+			if (!bNoChange) {
+				//not change if we (possible) have lower level tabs, which need original location.hash.
+				//CAUTION - we need to change location.hash for history plugin support, if we have no lower level tabs BUT location.hash is like this #/level1/level2
+				//it was implemented here in previous revs, see svn history, but is removed because not used
 				location.hash = sPath;
 			}
 
 			//store current path, used for history support
-			$(this).data('currentPath', sPath);
+			$(this).data('sPath', sPath);
 
 			return false;
 		});
 
-		//try to open tab from location
-		this.find('a').each(function(i, element) {
-			//if location.hash is empty, it simple matches the first href
-			if ($(this).attr('href').search(location.hash.replace("#", "")) > -1) {
-				$(this).trigger('click');
-				return false;
-			}
-			else if (location.hash.replace("#", "").search($(this).attr('href')) > -1) {//if href is only part of location
-				$(this).trigger('click', [true]);//send true to change location later, because it can be used by lower level tabs
-				return false;
-			}
-		});
+		//try to open tab from location, if no success - open first
+		if (!$.tabs.findAndOpenTab(this.find('a'))) {
+			this.find('a:first').click();
+		}
 
 		//history support
 		setInterval($.proxy(function() {
-			var h = location.hash.replace("#", "");
-			var oA = this.find('a[href=' + h + ']');
-
-			if (oA.length && h !== this.data('currentPath')) {
-				oA.trigger('click');
-			}
+			//find all A except current
+			$.tabs.findAndOpenTab(this.find('a[href!=' + this.data('sPath') + ']'));
 		}, this), 200);
 
 		return this;
 	};
 
 	$.tabs = {
-		iTimeOutID: null
+		findAndOpenTab: function(oA) {
+			var bFind = true, sCurrentLocation = location.hash.replace("#", "");
+			oA.each(function() {
+				//if location.hash is empty, it simple matches the first href
+				if ($(this).attr('href') === sCurrentLocation) {
+					$(this).trigger('click');
+					return bFind = false;//we need false here because of return
+				}
+				else if (sCurrentLocation.search($(this).attr('href')) > -1) {//if href is only part of location
+					$(this).trigger('click', [true]);//send true to change location later, because it can be used by lower level tabs
+					return bFind = false;
+				}
+			});
+
+			//return reverse
+			return !bFind;
+		}
 	};
 
 })(jQuery);
