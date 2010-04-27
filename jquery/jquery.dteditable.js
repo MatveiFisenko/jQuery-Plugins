@@ -28,6 +28,7 @@
   * @param mixed		options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash			options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
   * @param Bool			options[disableDetails]	Create 'show' overlay on dblclick event. Default false.
+  * @param String		options[showUrl]		Action for 'show' overlay on dblclick event. Default 'show'.
   * @param String		options[overlayClass]	Used to specify overlay class. Default simple_overlay. Be carefull - it is used as #id too!
   * @param Array/bool	options[disableEdit]	Disable editing of several table columns. Starting from 0. Example: [0, 1]. If true - disable edit all. Default false.
   *
@@ -231,7 +232,7 @@
     		//open normal 'show' overlay
     		if (oTD.nodeName) {
     			//send table ID as param. Used if we edit main object in show dialog
-    			sPath = options.sModuleURL + 'show/' + options.oTable.fnGetData(oTD.parentNode)[0] + '?' + $.param({ _sParentTableID: options.oTable[0].id });
+    			sPath = options.sModuleURL + options.showUrl + '/' + options.oTable.fnGetData(oTD.parentNode)[0] + '?' + $.param({ _sParentTableID: options.oTable[0].id });
     		}
     		//open modal dialog
     		else {
@@ -346,7 +347,7 @@
 
 	//default options used, assign selectColumns to get rid of annoying 'check object before check object property'
     $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {},
-    	overlayClass: 'simple_overlay' };
+    	overlayClass: 'simple_overlay', showUrl: 'show' };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);
