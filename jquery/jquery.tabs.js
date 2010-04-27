@@ -76,7 +76,7 @@
 		setInterval(function() {
 			//find all A except current
 			$.tabs.findAndOpenTab(self.find('a[href!=' + self.data('sPath') + ']'));
-		}, 200);
+		}, 500);
 
 		return this;
 	};
