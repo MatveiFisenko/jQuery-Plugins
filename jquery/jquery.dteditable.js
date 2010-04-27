@@ -189,7 +189,7 @@
    		setTimeout: function(e) {
     		$.editable.clearTimeout(e);
 
-    		e.data($.editable.sSelfName + 'iTimeoutID', setTimeout(function() {$.editable.setText(e);}, 2000));
+    		e.data($.editable.sSelfName + 'iTimeoutID', setTimeout(function() {$.editable.setText(e);}, 4000));
     	},
     	clearTimeout: function(e) {
     		clearTimeout(e.data($.editable.sSelfName + 'iTimeoutID'));
