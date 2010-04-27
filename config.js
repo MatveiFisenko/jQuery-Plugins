@@ -15,7 +15,7 @@ var oDataTableDefaults = {
 	"aaSorting": [[1, 'asc']],
 	//<"top"i>rt<"bottom"flp<"clear">
 	"sDom": '<"top"<"dtBar">fi>rt<"bottom"lp<"clear">',
-	"bStateSave": true,
+	"bStateSave": false,
 	iCookieDuration: 86400,//one day
 	sPaginationType: 'full_numbers',
 	"oLanguage": {
