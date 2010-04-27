@@ -43,7 +43,7 @@
 			//if not href
 			if (!oA.is('a')) return;
 
-			var sPath = oA.attr('href').replace("#", "");//actually we do not need this replace, left for compatibility
+			var sPath = oA.attr('href');
 
 			if (!sPath) return;
 
@@ -72,10 +72,11 @@
 		}
 
 		//history support
-		setInterval($.proxy(function() {
+		var self = this;
+		setInterval(function() {
 			//find all A except current
-			$.tabs.findAndOpenTab(this.find('a[href!=' + this.data('sPath') + ']'));
-		}, this), 200);
+			$.tabs.findAndOpenTab(self.find('a[href!=' + self.data('sPath') + ']'));
+		}, 200);
 
 		return this;
 	};
@@ -86,7 +87,7 @@
 			oA.each(function() {
 				//if location.hash is empty, it simple matches the first href
 				if ($(this).attr('href') === sCurrentLocation) {
-					$(this).trigger('click');
+					$(this).click();
 					return bFind = false;//we need false here because of return
 				}
 				else if (sCurrentLocation.search($(this).attr('href')) > -1) {//if href is only part of location
