@@ -24,6 +24,7 @@
   * @param Object		options[oTable] 		DataTables object. *
   * @param Function		options[callback]		Function to run after submitting edited content.
   * @param Hash			options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
+  * @param String		options[editModule]		Module name where to send edited content. Default is target.
   * @param Hash			options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash. Property _sTableID is reserved for internal use.
   * @param mixed		options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash			options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
@@ -52,6 +53,9 @@
 
     	//we keep target only for compatibility with editable
     	options.sModuleURL = target;
+
+    	//set editModule
+    	options.editModule = options.editModule || target;
 
     	//if we pass DataTables object directly
     	if (this.fnUpdate) options.oTable = this;
@@ -137,7 +141,7 @@
                     }
     			}
 
-    			$.post(options.sModuleURL + 'update', oSubmitData, $.proxy(function (sText, sStatus, oJSReq) {
+    			$.post(options.editModule + 'update', oSubmitData, $.proxy(function (sText, sStatus, oJSReq) {
     					//get real new value
     					sText = oJSReq.responseJS;
     					//if we edited special column
