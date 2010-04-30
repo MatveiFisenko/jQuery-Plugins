@@ -3127,7 +3127,7 @@
 				_fnEscapeRegex( sInput ).split( ' ' ) :
 				sInput.split( ' ' );
 			var sRegExpString = '^(?=.*?'+asSearch.join( ')(?=.*?' )+').*$';
-			var rpSearch = new RegExp( sRegExpString, "i" ); /* case insensitive */
+			var rpSearch = new RegExp( sRegExpString, "im" ); /* case insensitive, multiline! */
 
 			/*
 			 * If the input is blank - we want the full data set
