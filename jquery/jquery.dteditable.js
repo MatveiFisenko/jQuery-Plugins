@@ -107,7 +107,7 @@
             //work with special columns
             if (options.selectColumns[sColumnName]) {
             	//if we have check function and it returns not true
-            	if (options.selectColumns[sColumnName].change && !options.selectColumns[sColumnName].change.call(oTD[0], options.oTable)) {
+            	if ($.isFunction(options.selectColumns[sColumnName].change) && !options.selectColumns[sColumnName].change.call(oTD[0], options.oTable)) {
        				return;
         		}
            		sText = $.editable.makeSelect(options.selectColumns[sColumnName].values, oTD.data($.editable.sSelfName + 'sOldText'));
