@@ -65,6 +65,15 @@
     	//if we made it editable already - return
     	if (options.oTable.data($.editable.sSelfName)) return this;
 
+    	//if we have selectColumns - prepare them
+    	if (options.selectColumns) {
+    		$.each(options.selectColumns, function(i, element) {
+    			if (!element.change) {
+    				options.selectColumns[i] = { values: element, change: null };
+    			}
+    		});
+    	}
+
     	//merge options with default ones
     	options = $.extend({}, $.editable.defaultOptions, options);
 
@@ -97,7 +106,11 @@
             var sText, sColumnName = $.editable.getColumnName.call(oTD[0], options.oTable);
             //work with special columns
             if (options.selectColumns[sColumnName]) {
-            	sText = $.editable.makeSelect(options.selectColumns[sColumnName], oTD.data($.editable.sSelfName + 'sOldText'));
+            	//if we have check function and it returns not true
+            	if (options.selectColumns[sColumnName].change && !options.selectColumns[sColumnName].change.call(oTD[0], options.oTable)) {
+       				return;
+        		}
+           		sText = $.editable.makeSelect(options.selectColumns[sColumnName].values, oTD.data($.editable.sSelfName + 'sOldText'));
             }
             else {
             	sText = '<input type="text" class="ui-state-active ui-corner-all" value="' + oTD[0].innerHTML + '" style="width: ' + oTD.width() + 'px;" />';
@@ -147,7 +160,7 @@
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
 	    					//selectColumns can contain hash, to check if sText is string
-							sText = options.selectColumns[oSubmitData.sColumnName][ isNaN(sText) ? sText : parseInt(sText) ];
+							sText = options.selectColumns[oSubmitData.sColumnName].values[ isNaN(sText) ? sText : parseInt(sText) ];
 						}
     					$.editable.setText(oTD, sText);
 
