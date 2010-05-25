@@ -166,8 +166,15 @@
 				}
 				//if we have delete row for a table
 				else if (oJSReq.responseJS.aDeleteRow) {
-					alert('Объект успешно удалён');
-					window.location.reload();
+					//successful delete
+					if (oJSReq.responseJS.aDeleteRow.iPersonID) {
+						alert('Объект успешно удалён');
+						window.location.reload();
+					}
+					//possible trigger error
+					else {
+						alert('Объект не может быть удалён, потому что состоит в группах/имеет платежи.');
+					}
 				}
 			}
 		}
