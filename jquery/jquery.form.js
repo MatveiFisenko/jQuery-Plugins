@@ -164,6 +164,11 @@
 						$.notify.show('updated');
 					}
 				}
+				//if we have delete row for a table
+				else if (oJSReq.responseJS.aDeleteRow) {
+					alert('Объект успешно удалён');
+					window.location.reload();
+				}
 			}
 		}
 	};
