@@ -168,7 +168,7 @@
 				else if (oJSReq.responseJS.aDeleteRow) {
 					//successful delete
 					if (oJSReq.responseJS.aDeleteRow.iPersonID) {
-						alert('Объект успешно удалён');
+						alert('Объект успешно удалён.');
 						window.location.reload();
 					}
 					//possible trigger error
