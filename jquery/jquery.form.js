@@ -167,7 +167,7 @@
 				//if we have delete row for a table
 				else if (oJSReq.responseJS.aDeleteRow) {
 					//successful delete
-					if (oJSReq.responseJS.aDeleteRow.iPersonID) {
+					if (oJSReq.responseJS.aDeleteRow !== 'error') {
 						alert('Объект успешно удалён.');
 						window.location.reload();
 					}
