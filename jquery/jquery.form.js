@@ -48,7 +48,13 @@
 
 			$.form.toggleButtons.call(this);
 
-			$.post(this.action, this, $.proxy(options.fHandler, this));
+			$.ajax({
+				type: "POST",
+				url: this.action,
+				data: this,
+				success: $.proxy(options.fHandler, this),
+				error: $.proxy(options.fErrorHandler, this)
+			});
 			return false;
 		});
 
@@ -161,7 +167,7 @@
 					//send event only if table is specified, see jquery.editable.js
 					if ($.editable.sParentTableID) {
 						$('#' + $.editable.sParentTableID).trigger('eNewRow', [oJSReq.responseJS.aEditRow, true]);
-						$.notify.show('updated');
+						$.notify.show('updated', false, this);
 					}
 				}
 				//if we have delete row for a table
@@ -177,9 +183,16 @@
 					}
 				}
 			}
+		},
+
+		//on error
+		ajaxError: function() {
+			$.form.toggleButtons.call(this);
+
+			$.notify.show('error', false, this);
 		}
 	};
 
-	$.form.defaultOptions = { fHandler: $.form.ajaxSuccess };
+	$.form.defaultOptions = { fHandler: $.form.ajaxSuccess, fErrorHandler: $.form.ajaxError };
 
 })(jQuery);
