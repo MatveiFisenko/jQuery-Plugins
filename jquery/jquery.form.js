@@ -49,7 +49,7 @@
 			$.form.toggleButtons.call(this);
 
 			$.ajax({
-				type: "POST",
+				type: 'POST',
 				url: this.action,
 				data: this,
 				success: $.proxy(options.fHandler, this),
