@@ -158,9 +158,7 @@
 					//send event only if table is specified, see jquery.editable.js
 					if ($.editable.sTableID) {
 						$('#' + $.editable.sTableID).trigger('eNewRow', [oJSReq.responseJS.aNewRow]);
-						$.notify.show('added');
 					}
-
 				}
 				//if we have edited row for a table
 				else if (oJSReq.responseJS.aEditRow) {
