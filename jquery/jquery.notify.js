@@ -40,14 +40,9 @@
 
 			mPlace = $(mPlace);
 
-			//if object not exist or if div.notify was never attached to mPlace - attach it
-			if (!$.notify.obj || !mPlace.children('div.notify').length) {
+			//if object not exist or if div.notify was never attached to mPlace - attach it. If is was attached - assign it.
+			if (!$.notify.obj || !($.notify.obj = mPlace.children('div.notify')).length) {
 				$.notify.obj = $('<div class="notify ui-state-highlight ui-corner-all"></div>').appendTo(mPlace);
-			}
-			//else check if attached div.notify is the same as obj
-			//children($.notify.obj) does not work
-			else if (mPlace.children('div.notify')[0] !== $.notify.obj[0]) {
-				$.notify.obj = mPlace.children('div.notify');
 			}
 
 			$.notify.obj.toggleClass('ui-state-error', mText === 'error' ? true : false).html($.notify.messages[mText] || mText).show().delay(2500).fadeOut();
