@@ -104,7 +104,7 @@
 
 			if (oJSReq.responseJS == null) {
 				//we have global error
-				$.notify.show('error', true);
+				$.notify.show('error', false, this);
 			}
 			else if (oJSReq.responseJS.aErrorIDs != null) {
 //				if (oJSReq.responseJS.aErrorIDs.length == 1 && oJSReq.responseJS.aErrorIDs[0] == 'confirm_form') {
@@ -125,19 +125,19 @@
 				}
 
 				if (oJSReq.responseJS.reload) {
-					$.notify.show('success');
+					$.notify.show('success', false, this);
 					window.location.reload();
 				}
 				else if (oJSReq.responseJS.ok) {
 					if (oJSReq.responseJS.ok == 1) {
-						$.notify.show('success');
+						$.notify.show('success', false, this);
 					}
 					else {
-						$.notify.show(oJSReq.responseJS.ok);
+						$.notify.show(oJSReq.responseJS.ok, false, this);
 					}
 				}
 				else if (oJSReq.responseJS.location) {
-					$.notify.show('success');
+					$.notify.show('success', false, this);
 					//if location is the same page.
 					if (window.location.pathname + window.location.search == oJSReq.responseJS.location) {
 						oJSReq.responseJS.location += '?' + (new Date()).getTime();
