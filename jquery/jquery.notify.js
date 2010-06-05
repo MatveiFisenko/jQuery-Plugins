@@ -50,7 +50,7 @@
 				$.notify.obj = mPlace.children('div.notify');
 			}
 
-			$.notify.obj.toggleClass('ui-state-error', mText === 'error' ? true : false).html($.notify.messages[mText] || mText).show().delay(1500).fadeOut();
+			$.notify.obj.toggleClass('ui-state-error', mText === 'error' ? true : false).html($.notify.messages[mText] || mText).show().delay(2500).fadeOut();
 
 			if (bPersistent) {
 				//clear effects queue
