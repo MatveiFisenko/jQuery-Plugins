@@ -17,7 +17,7 @@
   * @type  jQuery
   * @param String		mText					Text to show. Can be hash key, see 'messages'.
   * @param Bool			bPersistent				Do not hide message after 1500 ms. Default false.
-  * @param jQuery/DOM	mPlace					Div where to show text. Default is div.notify appended to document.body.
+  * @param jQuery/DOM	mPlace					jQuery/DOM/Selector to append div.notify to. Default div.notify is appended to document.body.
   *
   */
 
@@ -35,11 +35,19 @@
 
 
 		show: function(mText, bPersistent, mPlace) {
-			if (mPlace) {
-				$.notify.obj = $(mPlace);
+			//if we provide place to append notify - use it, else append to body
+			if (!mPlace) mPlace = 'body';
+
+			mPlace = $(mPlace);
+
+			//if object not exist or if div.notify was never attached to mPlace - attach it
+			if (!$.notify.obj || !mPlace.children('div.notify').length) {
+				$.notify.obj = $('<div class="notify ui-state-highlight ui-corner-all"></div>').appendTo(mPlace);
 			}
-			else if (!$.notify.obj) {
-				$.notify.obj = $('<div class="notify ui-state-highlight ui-corner-all"></div>').appendTo(document.body);
+			//else check if attached div.notify is the same as obj
+			//children($.notify.obj) does not work
+			else if (mPlace.children('div.notify')[0] !== $.notify.obj[0]) {
+				$.notify.obj = mPlace.children('div.notify');
 			}
 
 			$.notify.obj.toggleClass('ui-state-error', mText === 'error' ? true : false).html($.notify.messages[mText] || mText).show().delay(1500).fadeOut();
