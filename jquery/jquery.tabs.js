@@ -49,6 +49,11 @@
 
 			$.get(sPath, function(sText, sStatus, oJS) {
 				$(container).html(oJS.responseJS.sPageContents);
+
+				//if we supply title - use it
+				if (oJS.responseJS.sPageTitle) {
+					document.title = oJS.responseJS.sPageTitle;
+				}
 			});
 
 			oA.parent().addClass('current').siblings().removeClass('current');
