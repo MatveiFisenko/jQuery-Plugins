@@ -2,15 +2,6 @@
  * Store config here
  *
  */
-
-var oModules = {
-	index: '/index/',
-	people: '/people/',
-	groups: '/groups/',
-	payments: '/payments/',
-	visits: '/visits/'
-};
-
 var oDataTableDefaults = {
 	"aaSorting": [[1, 'asc']],
 	//<"top"i>rt<"bottom"flp<"clear">
