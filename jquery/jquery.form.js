@@ -64,7 +64,7 @@
 	$.form = {
 		//show text errors messages
 		showErrors: function(oResponse) {
-			if (!$(this).children('div.ui-state-error').length) {
+			if (!$(this).children(':first').is('div.ui-state-error')) {
 				$(this).prepend('<div class="ui-state-error ui-corner-all">' +
 					'<div class="ui-icon ui-icon-alert" style="float: left;"></div>' +
 					'<div style="margin-left: 20px;" class="errors"></div></div>');
