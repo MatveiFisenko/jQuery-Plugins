@@ -98,12 +98,12 @@
 
     	showTable: function(options) {
     		//compatibility with dataTables code
-    		var nInsertNode = this, oSettings = options;
+    		var nInsertNode = this;
     		/* Loop over the user set positioning and place the elements as needed */
 			var aDom = options.sDom.split('');
 
-			var nTmp, iPushFeature, cOption, nNewNode, cNext, sClass, j;
-			for ( var i=0 ; i<aDom.length ; i++ )
+			var nTmp, iPushFeature, cOption, cNext, sClass, j;
+			for ( var i = 0, iLength = aDom.length ; i < iLength ; i++ )
 			{
 				iPushFeature = 0;
 				cOption = aDom[i];
@@ -133,19 +133,19 @@
 					/* End container div */
 					nInsertNode = nInsertNode.parent();
 				}
-				else if ( cOption == 'l' && oSettings.oFeatures.bPaginate && oSettings.oFeatures.bLengthChange )
+				else if ( cOption == 'l' && options.oFeatures.bPaginate && options.oFeatures.bLengthChange )
 				{
 					/* Length */
-					nTmp = $.openTable._fnFeatureHtmlLength( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlLength( options );
 					iPushFeature = 1;
 				}
-				else if ( cOption == 'f' && oSettings.oFeatures.bFilter )
+				else if ( cOption == 'f' && options.oFeatures.bFilter )
 				{
 					/* Filter */
-					nTmp = $.openTable._fnFeatureHtmlFilter( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlFilter( options );
 					iPushFeature = 1;
 				}
-				else if ( cOption == 'r' && oSettings.oFeatures.bProcessing )
+				else if ( cOption == 'r' && options.oFeatures.bProcessing )
 				{
 					/* pRocessing */
 					//do nothing
@@ -153,19 +153,19 @@
 				else if ( cOption == 't' )
 				{
 					/* Table */
-					nTmp = $.openTable._fnFeatureHtmlTable( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlTable( options );
 					iPushFeature = 1;
 				}
-				else if ( cOption ==  'i' && oSettings.oFeatures.bInfo )
+				else if ( cOption ==  'i' && options.oFeatures.bInfo )
 				{
 					/* Info */
-					nTmp = $.openTable._fnFeatureHtmlInfo( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlInfo( options );
 					iPushFeature = 1;
 				}
-				else if ( cOption == 'p' && oSettings.oFeatures.bPaginate )
+				else if ( cOption == 'p' && options.oFeatures.bPaginate )
 				{
 					/* Pagination */
-					nTmp = $.openTable._fnFeatureHtmlPaginate( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlPaginate( options );
 					iPushFeature = 1;
 				}
 
