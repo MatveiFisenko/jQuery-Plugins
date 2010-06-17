@@ -46,17 +46,35 @@
     	//create surrounding divs and table itself
     	$.openTable.showTable.call(this, options);
 
+    	//bind events
+    	this.find('div.dataTables_filter input').keyup(function() {
+    		if (this.value.length) {
+    			var aData = $.openTable.filterData(options, this.value);
+
+    			//prepare data for body
+            	aData = $.openTable.sortData(options, aData);
+            	//create body
+            	var sBody = $.openTable.createTBody(options, aData);
+            	//update body
+            	$(this).parents('div.dDataTable').find('table tbody').html(sBody);
+    		}
+
+    		return false;
+    	});
+
     	return this;
     };
 
     $.openTable = {
     	sSelfName: 'openTable',
 
-    	sortData: function(options) {
+    	sortData: function(options, aData) {
 	    	//column used for sorting
     		var iColumn = options.aaSorting[0][0];
+    		//we can provide data after filtering
+    		aData = aData || options.aaData;
     		//sort array of data
-	    	options.aaData.sort(function(a, b) {
+	    	aData.sort(function(a, b) {
     			if (a[iColumn] > b[iColumn]) {
     				return 1;
     			}
@@ -66,16 +84,28 @@
 	    	});
 	    	//reverse if order is desc
 	    	if (options.aaSorting[0][1] === 'desc') {
-	    		options.aaData.reverse();
+	    		aData.reverse();
 	    	}
 
 	    	//return only 'recordsPerPage' rows
-	    	return options.aaData.slice(0, options.recordsPerPage);
+	    	return aData.slice(0, options.recordsPerPage);
+    	},
+
+    	filterData: function(options, sSearch) {
+    		//feature - it search in hidden columns too
+    		return options.aaData.filter(function(element) {
+    			for (var i = 0, iLength = element.length; i < iLength; i++) {
+    				if (element[i].indexOf(sSearch) > -1) {
+        				return true;
+        			}
+    			}
+    			return false;
+    		});
     	},
 
     	createTBody: function (options, oData) {
 	    	//create table data
-	    	var sBody = '<tbody>';
+	    	var sBody = '';
 
 	    	$.each(oData, function(i, element) {
 	    		sBody += '<tr class="' + (i % 2 ? 'odd' : 'even') + '">';
@@ -90,8 +120,6 @@
 
 	    		sBody += '</tr>';
 	    	});
-
-	    	sBody += '</tbody>';
 
 	    	return sBody;
     	},
@@ -218,7 +246,7 @@
         	//create body
         	var sBody = $.openTable.createTBody(options, oData);
 
-        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '">' + sHeader + sBody + '</table>';
+        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '">' + sHeader + '<tbody>' + sBody + '</tbody></table>';
     	}
 
     };
