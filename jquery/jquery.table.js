@@ -43,33 +43,8 @@
     	//mark this table as editable
     	$(this).data($.openTable.sSelfName, true);
 
-    	//create table header
-    	var sHeader = '<thead><tr>';
-
-    	$.each(options.aoColumns, function(i) {
-    		//normalize aoColumns
-    		if (typeof(this.bVisible) === 'undefined') {
-    			this.bVisible = true;
-    		}
-    		if (this.bVisible) {
-    			//create sorting class
-    			sHeader += '<th class="' + (i == options.aaSorting[0][0] ? (options.aaSorting[0][1] !== 'desc' ? 'sorting_asc' : 'sorting_desc') : 'sorting')
-    					+ '" width="' + this.sWidth + '">' + this.sTitle + '</th>';
-    		}
-    	});
-
-    	sHeader +='</tr></thead>';
-
-    	//create table with only header
-    	var oTable = $('<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '">' + sHeader + '</table>').appendTo(this);
-
-    	//create surrounding divs
-    	$.openTable.createSurrounding.call(this, options);
-
-    	var oData = $.openTable.sortData(options);
-    	var sBody = $.openTable.createTBody(options, oData);
-
-    	oTable.append(sBody);
+    	//create surrounding divs and table itself
+    	$.openTable.showTable.call(this, options);
 
     	return this;
     };
@@ -121,9 +96,9 @@
 	    	return sBody;
     	},
 
-    	createSurrounding: function(options) {
+    	showTable: function(options) {
     		//compatibility with dataTables code
-    		var nInsertNode = $('<div></div>').prependTo(this)[0];
+    		var nInsertNode = $('<div></div>').prependTo(this)[0], oSettings = options;
     		/* Loop over the user set positioning and place the elements as needed */
 			var aDom = options.sDom.split('');
 
@@ -164,74 +139,93 @@
 				else if ( cOption == 'l' && oSettings.oFeatures.bPaginate && oSettings.oFeatures.bLengthChange )
 				{
 					/* Length */
-					nTmp = _fnFeatureHtmlLength( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlLength( oSettings );
 					iPushFeature = 1;
 				}
 				else if ( cOption == 'f' && oSettings.oFeatures.bFilter )
 				{
 					/* Filter */
-					nTmp = _fnFeatureHtmlFilter( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlFilter( oSettings );
 					iPushFeature = 1;
 				}
 				else if ( cOption == 'r' && oSettings.oFeatures.bProcessing )
 				{
 					/* pRocessing */
-					nTmp = _fnFeatureHtmlProcessing( oSettings );
-					iPushFeature = 1;
+					//do nothing
 				}
 				else if ( cOption == 't' )
 				{
 					/* Table */
-					nTmp = oSettings.nTable;
+					nTmp = $.openTable._fnFeatureHtmlTable( oSettings );
 					iPushFeature = 1;
 				}
 				else if ( cOption ==  'i' && oSettings.oFeatures.bInfo )
 				{
 					/* Info */
-					nTmp = _fnFeatureHtmlInfo( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlInfo( oSettings );
 					iPushFeature = 1;
 				}
 				else if ( cOption == 'p' && oSettings.oFeatures.bPaginate )
 				{
 					/* Pagination */
-					nTmp = _fnFeatureHtmlPaginate( oSettings );
+					nTmp = $.openTable._fnFeatureHtmlPaginate( oSettings );
 					iPushFeature = 1;
-				}
-				else if ( _oExt.aoFeatures.length !== 0 )
-				{
-					/* Plug-in features */
-					var aoFeatures = _oExt.aoFeatures;
-					for ( var k=0, kLen=aoFeatures.length ; k<kLen ; k++ )
-					{
-						if ( cOption == aoFeatures[k].cFeature )
-						{
-							nTmp = aoFeatures[k].fnInit( oSettings );
-							if ( nTmp )
-							{
-								iPushFeature = 1;
-							}
-							break;
-						}
-					}
 				}
 
 				/* Add to the 2D features array */
 				if ( iPushFeature == 1 )
 				{
-					if ( typeof oSettings.aanFeatures[cOption] != 'object' )
-					{
-						oSettings.aanFeatures[cOption] = [];
-					}
-					oSettings.aanFeatures[cOption].push( nTmp );
-					nInsertNode.appendChild( nTmp );
+					$(nInsertNode).append(nTmp);
 				}
 			}
 
+    	},
+
+    	_fnFeatureHtmlLength: function(options) {
+    		return '<div class="dataTables_length">' + options.oLanguage.sLengthMenu.replace('_MENU_', 123) + '</div>';
+    	},
+
+    	_fnFeatureHtmlFilter: function(options) {
+    		return '<div class="dataTables_filter">' + options.oLanguage.sSearch + ' <input type="text" class="ui-state-active ui-corner-all"></div>';
+    	},
+
+    	_fnFeatureHtmlInfo: function(options) {
+    		return '<div class="dataTables_info">' + options.oLanguage.sInfo + 'TODO</div>';
+    	},
+
+    	_fnFeatureHtmlPaginate: function(options) {
+    		return '<div class="dataTables_paginate paging_full_numbers">' + 'TODO' + '</div>';
+    	},
+
+    	_fnFeatureHtmlTable: function(options) {
+    		//create table header
+        	var sHeader = '<thead><tr>';
+
+        	$.each(options.aoColumns, function(i) {
+        		//normalize aoColumns
+        		if (typeof(this.bVisible) === 'undefined') {
+        			this.bVisible = true;
+        		}
+        		if (this.bVisible) {
+        			//create sorting class
+        			sHeader += '<th class="' + (i == options.aaSorting[0][0] ? (options.aaSorting[0][1] !== 'desc' ? 'sorting_asc' : 'sorting_desc') : 'sorting')
+        					+ '" width="' + this.sWidth + '">' + this.sTitle + '</th>';
+        		}
+        	});
+
+        	sHeader +='</tr></thead>';
+
+        	//prepare data for body
+        	var oData = $.openTable.sortData(options);
+        	//create body
+        	var sBody = $.openTable.createTBody(options, oData);
+
+        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '">' + sHeader + sBody + '</table>';
     	}
 
     };
 
 	//default options used
-    $.openTable.defaultOptions = { className: 'display', recordsPerPage: 10 };
+    $.openTable.defaultOptions = { className: 'display', recordsPerPage: 10, oFeatures: { bFilter: true, bInfo: true, bLengthChange: true, bPaginate: true } };
 
 })(jQuery);
