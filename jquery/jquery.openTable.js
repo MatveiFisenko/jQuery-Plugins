@@ -35,13 +35,13 @@
     	options = options || {};
 
     	//if we made it editable already - return
-    	if ($(this).data($.openTable.sSelfName)) return this;
+    	if (this.data($.openTable.sSelfName)) return this;
 
     	//merge options with default ones
     	options = $.extend({}, $.openTable.defaultOptions, options);
 
     	//mark this table as editable
-    	$(this).data($.openTable.sSelfName, true);
+    	this.data($.openTable.sSelfName, true);
 
     	//create surrounding divs and table itself
     	$.openTable.showTable.call(this, options);
@@ -98,7 +98,7 @@
 
     	showTable: function(options) {
     		//compatibility with dataTables code
-    		var nInsertNode = $('<div></div>').prependTo(this)[0], oSettings = options;
+    		var nInsertNode = this[0], oSettings = options;
     		/* Loop over the user set positioning and place the elements as needed */
 			var aDom = options.sDom.split('');
 
@@ -182,7 +182,8 @@
     	},
 
     	_fnFeatureHtmlLength: function(options) {
-    		return '<div class="dataTables_length">' + options.oLanguage.sLengthMenu.replace('_MENU_', 123) + '</div>';
+    		var sSelect = '<select><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>';
+    		return '<div class="dataTables_length">' + options.oLanguage.sLengthMenu.replace('_MENU_', sSelect) + '</div>';
     	},
 
     	_fnFeatureHtmlFilter: function(options) {
