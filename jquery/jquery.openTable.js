@@ -98,7 +98,7 @@
 
     	showTable: function(options) {
     		//compatibility with dataTables code
-    		var nInsertNode = this[0], oSettings = options;
+    		var nInsertNode = this, oSettings = options;
     		/* Loop over the user set positioning and place the elements as needed */
 			var aDom = options.sDom.split('');
 
@@ -111,7 +111,6 @@
 				if ( cOption == '<' )
 				{
 					/* New container div */
-					nNewNode = document.createElement( 'div' );
 
 					/* Check to see if we should append a class name to the container */
 					cNext = aDom[i+1];
@@ -124,17 +123,15 @@
 							sClass += aDom[i+j];
 							j++;
 						}
-						nNewNode.className = sClass;
 						i += j; /* Move along the position array */
 					}
 
-					nInsertNode.appendChild( nNewNode );
-					nInsertNode = nNewNode;
+					nInsertNode = $('<div class="' + sClass + '"></div>').appendTo(nInsertNode);
 				}
 				else if ( cOption == '>' )
 				{
 					/* End container div */
-					nInsertNode = nInsertNode.parentNode;
+					nInsertNode = nInsertNode.parent();
 				}
 				else if ( cOption == 'l' && oSettings.oFeatures.bPaginate && oSettings.oFeatures.bLengthChange )
 				{
@@ -175,7 +172,7 @@
 				/* Add to the 2D features array */
 				if ( iPushFeature == 1 )
 				{
-					$(nInsertNode).append(nTmp);
+					nInsertNode.append(nTmp);
 				}
 			}
 
