@@ -47,19 +47,26 @@
     	$.openTable.showTable.call(this, options);
 
     	//bind events
+    	//filter
     	this.find('div.dataTables_filter input').keyup(function() {
-    		if (this.value.length) {
-    			var aData = $.openTable.filterData(options, this.value);
-
-    			//prepare data for body
-            	aData = $.openTable.sortData(options, aData);
-            	//create body
-            	var sBody = $.openTable.createTBody(options, aData);
-            	//update body
-            	$(this).parents('div.dDataTable').find('table tbody').html(sBody);
-    		}
+			//filter data
+			$.openTable.filterData(options, this.value);
+        	//create body
+        	var sBody = $.openTable.createTBody(options);
+        	//update body
+        	$(this).parents('div.dDataTable').find('table tbody').html(sBody);
 
     		return false;
+    	});
+
+    	//page per page
+    	this.find('div.dataTables_length select').change(function() {
+    		options.recordsPerPage = this.value;
+
+    		//create body
+        	var sBody = $.openTable.createTBody(options);
+        	//update body
+        	$(this).parents('div.dDataTable').find('table tbody').html(sBody);
     	});
 
     	return this;
@@ -68,13 +75,13 @@
     $.openTable = {
     	sSelfName: 'openTable',
 
-    	sortData: function(options, aData) {
+    	sortData: function(options) {
 	    	//column used for sorting
     		var iColumn = options.aaSorting[0][0];
-    		//we can provide data after filtering
-    		aData = aData || options.aaData;
+    		//store sorted data in separate var
+    		options.asData = options.aaData;
     		//sort array of data
-	    	aData.sort(function(a, b) {
+    		options.asData.sort(function(a, b) {
     			if (a[iColumn] > b[iColumn]) {
     				return 1;
     			}
@@ -84,30 +91,36 @@
 	    	});
 	    	//reverse if order is desc
 	    	if (options.aaSorting[0][1] === 'desc') {
-	    		aData.reverse();
+	    		options.asData.reverse();
 	    	}
-
-	    	//return only 'recordsPerPage' rows
-	    	return aData.slice(0, options.recordsPerPage);
     	},
 
     	filterData: function(options, sSearch) {
-    		//feature - it search in hidden columns too
-    		return options.aaData.filter(function(element) {
-    			for (var i = 0, iLength = element.length; i < iLength; i++) {
-    				if (element[i].indexOf(sSearch) > -1) {
-        				return true;
-        			}
-    			}
-    			return false;
-    		});
+    		//feature - it searches in hidden columns too
+    		//prepare search string - make it uppercase to avoid bugs with russian language - /i modifier do not work properly
+    		if (sSearch) {
+	    		sSearch = new RegExp(sSearch.toUpperCase(), 'i');
+	    		options.afData = options.asData.filter(function(element) {
+	    			for (var i = 0, iLength = element.length; i < iLength; i++) {
+	    				if (element[i].search(sSearch) > -1) {
+	        				return true;
+	        			}
+	    			}
+	    			return false;
+	    		});
+    		}
+    		else {
+    			options.afData = options.asData;
+    		}
+
+    		options.aTotalPages = options.afData.length;
     	},
 
-    	createTBody: function (options, oData) {
+    	createTBody: function (options) {
 	    	//create table data
 	    	var sBody = '';
 
-	    	$.each(oData, function(i, element) {
+	    	$.each(options.afData.slice(0, options.recordsPerPage), function(i, element) {
 	    		sBody += '<tr class="' + (i % 2 ? 'odd' : 'even') + '">';
 
 	    		//iterate throw array of data for <tr>
@@ -242,9 +255,10 @@
         	sHeader +='</tr></thead>';
 
         	//prepare data for body
-        	var oData = $.openTable.sortData(options);
+        	$.openTable.sortData(options);
+        	$.openTable.filterData(options);
         	//create body
-        	var sBody = $.openTable.createTBody(options, oData);
+        	var sBody = $.openTable.createTBody(options);
 
         	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '">' + sHeader + '<tbody>' + sBody + '</tbody></table>';
     	}
