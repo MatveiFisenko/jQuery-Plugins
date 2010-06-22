@@ -172,7 +172,7 @@
     	//calculate column index including hidden columns
     	_getColumnHiddenIndex: function(aoColumns, iColumn) {
     		$.each(aoColumns, function(i) {
-    			if (i <= iColumn) {
+    			if (i < iColumn) {
     				//if column is before selected and not visible - increment our iColumn
     				if (!this.bVisible) {
     					iColumn++;
