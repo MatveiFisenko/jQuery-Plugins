@@ -86,15 +86,60 @@
     		return false;
     	});
 
+    	//sorter
+    	this.children('table').find('thead > tr').click(function(e) {
+    		var oTh = $(e.target);
+    		//if we clicked on not-th element
+    		if (!oTh.is('th')) return;
+
+    		//sort data
+    		$.openTable.sortData(options, oTh.index());
+    		//filter data
+    		$.openTable.filterData(options, false);
+
+    		$.openTable.updateTable(options);
+
+    		//set active column
+    		oTh.attr('class', options.aaSorting[0][1] === 'asc' ? 'sorting_asc' : 'sorting_desc')
+    			.siblings('.sorting_asc, .sorting_desc').attr('class', 'sorting');
+
+    		return false;
+    	});
+
     	return this;
     };
 
     $.openTable = {
     	sSelfName: 'openTable',
 
-    	sortData: function(options) {
+    	sortData: function(options, iColumn) {
 	    	//column used for sorting
-    		var iColumn = options.aaSorting[0][0];
+    		if (isNaN(iColumn)) {
+    			iColumn = options.aaSorting[0][0];
+    		}
+    		else {
+    			//we need to check if we have hidden columns
+    			$.each(options.aoColumns, function(i) {
+	    			if (i <= iColumn) {
+	    				//if column is before selected and not visible - increment our iColumn
+	    				if (!this.bVisible) {
+	    					iColumn++;
+	    				}
+	        		}
+	    			else {
+	    				return false;
+	    			}
+	    		});
+
+    			//save current active column
+    			if (options.aaSorting[0][0] !== iColumn) {
+    				options.aaSorting[0] = [iColumn, 'asc'];
+    			}
+    			//flip asc/desc sorting
+    			else {
+    				options.aaSorting[0][1] = (options.aaSorting[0][1] === 'asc' ? 'desc' : 'asc');
+    			}
+    		}
     		//sort array of data
     		options.aaData.sort(function(a, b) {
     			if (a[iColumn] > b[iColumn]) {
@@ -112,9 +157,12 @@
 
     	filterData: function(options, sSearch) {
     		//feature - it searches in hidden columns too
-    		//prepare search string - make it uppercase to avoid bugs with russian language - /i modifier do not work properly
-    		if (sSearch) {
-	    		sSearch = new RegExp(sSearch.toUpperCase(), 'i');
+    		if (sSearch || (sSearch === false && options.oPager.mSearch)) {
+    			//it can be false if we internally want to repeat filter using already existing sSearch - for example if we sort on another column
+    			if (sSearch !== false) options.oPager.mSearch = sSearch;
+
+    			//prepare search string - make it uppercase to avoid bugs with russian language - /i modifier do not work properly
+	    		sSearch = new RegExp(options.oPager.mSearch.toUpperCase(), 'i');
 	    		options.afData = options.aaData.filter(function(element) {
 	    			for (var i = 0, iLength = element.length; i < iLength; i++) {
 	    				if (element[i].search(sSearch) > -1) {
@@ -123,11 +171,10 @@
 	    			}
 	    			return false;
 	    		});
-	    		options.oPager.bSearch = true;
     		}
     		else {
     			options.afData = options.aaData;
-    			options.oPager.bSearch = false;
+    			options.oPager.mSearch = false;
     		}
 
     		//recalculate pager data after each filter
@@ -218,7 +265,7 @@
     			.replace('_START_', (options.oPager.iTotalRecords === 0 ? 0 : (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + 1))
     			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage
     					+ options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage).length)
-    			.replace('_TOTAL_', options.oPager.iTotalRecords) + (options.oPager.bSearch ? ' ' + options.oLanguage.sInfoFiltered.replace('_MAX_', options.aaData.length) : '');
+    			.replace('_TOTAL_', options.oPager.iTotalRecords) + (options.oPager.mSearch ? ' ' + options.oLanguage.sInfoFiltered.replace('_MAX_', options.aaData.length) : '');
 
     		return sInfo;
     	},
