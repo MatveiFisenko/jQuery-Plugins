@@ -40,6 +40,8 @@
     	//merge options with default ones
     	options = $.extend({}, $.openTable.defaultOptions, options);
 
+    	options.oTable = this;
+
     	//mark this table as editable
     	this.data($.openTable.sSelfName, true);
 
@@ -51,12 +53,8 @@
     	this.find('div.dataTables_filter input').keyup(function() {
 			//filter data
 			$.openTable.filterData(options, this.value);
-        	//update body
-        	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
-        	//update pager
-        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
-        	//update info
-        	$(this).parents('div.dDataTable').find('div.dataTables_info').html($.openTable.createInfo(options));
+
+			$.openTable.updateTable(options);
 
     		return false;
     	});
@@ -68,14 +66,8 @@
     		options.oPager.iCurrentPage = 1;
     		//recalculate total pages
     		options.oPager.iTotalPages = Math.ceil(options.oPager.iTotalRecords / options.oPager.iRecordsPerPage);
-    		//update pager
-        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
-        	//update body
-        	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
-        	//update pager
-        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
-        	//update info
-        	$(this).parents('div.dDataTable').find('div.dataTables_info').html($.openTable.createInfo(options));
+
+    		$.openTable.updateTable(options);
 
         	return false;
     	});
@@ -88,12 +80,8 @@
 
     		//select page, if we clicked on already active page - do nothing
     		if (!$.openTable.selectPage(options, oSpan)) return false;
-        	//update body
-        	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
-    		//update pager
-        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
-        	//update info
-        	$(this).parents('div.dDataTable').find('div.dataTables_info').html($.openTable.createInfo(options));
+
+    		$.openTable.updateTable(options);
 
     		return false;
     	});
@@ -237,6 +225,15 @@
     		return sInfo;
     	},
 
+    	updateTable: function(options) {
+    		//update body
+        	options.oTable.children('table').children('tbody').html($.openTable.createTBody(options));
+    		//update pager
+        	options.oTable.find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+        	//update info
+        	options.oTable.find('div.dataTables_info').html($.openTable.createInfo(options));
+    	},
+
     	showTable: function(options) {
     		//sort & filter data
         	$.openTable.sortData(options);
@@ -345,7 +342,7 @@
 
     	_fnFeatureHtmlTable: function(options) {
     		//create table header
-        	var sHeader = '<thead><tr>';
+        	var sHeader = '';
 
         	$.each(options.aoColumns, function(i) {
         		//normalize aoColumns
@@ -359,12 +356,8 @@
         		}
         	});
 
-        	sHeader +='</tr></thead>';
-
-        	//create body
-        	var sBody = $.openTable.createTBody(options);
-
-        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '">' + sHeader + '<tbody>' + sBody + '</tbody></table>';
+        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '"><thead><tr>' + sHeader + '</tr></thead><tbody>'
+        		+ $.openTable.createTBody(options) + '</tbody></table>';
     	}
 
     };
