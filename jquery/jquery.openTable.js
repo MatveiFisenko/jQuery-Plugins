@@ -77,8 +77,8 @@
     		//if we clicked on not-td element
     		if (!oSpan.is('span')) return;
 
-    		//select page
-    		$.openTable.selectPage(options, oSpan);
+    		//select page, if we clicked on already active page - do nothing
+    		if (!$.openTable.selectPage(options, oSpan)) return false;
         	//update body
         	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
     		//update pager
@@ -157,12 +157,26 @@
     	},
 
     	createPager: function(options) {
-    		var sPager = '';
+    		var sPager = '', iStartPage, iEndPage;
     		//show 5 buttons
-    		var iPages = options.oPager.iCurrentPage + 4;
-    		if (iPages > options.oPager.iTotalPages) iPages = options.oPager.iTotalPages;
+    		//calc start page
+    		iStartPage = options.oPager.iCurrentPage - 2;
+    		if (iStartPage < 1) iStartPage = 1;
+    		//calc end page
+    		iEndPage = iStartPage + 4;
+    		if (iEndPage > options.oPager.iTotalPages) {
+    			var iStartDiff = iStartPage - 1,//calc possible left shift
+    				iEndDiff = iEndPage - options.oPager.iTotalPages;//calc needed left shift
+    			//shift pages
+    			while (iStartDiff-- > 0 && iEndDiff-- > 0) {
+    				iStartPage--;
+    				iEndPage--;
+    			}
+    			//if not possible to shift all pages to the left
+    			if (iEndPage > options.oPager.iTotalPages) iEndPage = options.oPager.iTotalPages;
+    		}
 
-    		for (var i = options.oPager.iCurrentPage; i <= iPages; i++) {
+    		for (var i = iStartPage; i <= iEndPage; i++) {
     			sPager += '<span class="' + (i === options.oPager.iCurrentPage ? 'paginate_active' : 'paginate_button') + '">' + i + '</span>';
     		}
 
@@ -173,9 +187,13 @@
     		var iCurrentPage;
 
     		if (mObj) {
+    			//if parent is span container
 	    		if (mObj.parent().is('span')) {
-	    			//selected page number
-	    			iCurrentPage = mObj.parent().children().index(mObj) + options.oPager.iCurrentPage;
+	    			//we clicked on already active element
+	    			if (mObj.hasClass('paginate_active')) return false;
+
+	    			//current page is clicked page minus active page plus current page
+	    			iCurrentPage = mObj.index() - mObj.siblings('.paginate_active').index() + options.oPager.iCurrentPage;
 	    		}
 	    		else if (mObj.hasClass('first')) {
 	    			iCurrentPage = 1;
@@ -194,9 +212,9 @@
     			iCurrentPage = 1;
     		}
 
-    		console.log(iCurrentPage);
-
     		options.oPager.iCurrentPage = iCurrentPage;
+
+    		return true;
     	},
 
     	showTable: function(options) {
