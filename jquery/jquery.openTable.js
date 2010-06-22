@@ -153,7 +153,7 @@
 	    	var sBody = '';
 
 	    	$.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
-	    		sBody += '<tr class="' + (i % 2 ? 'odd' : 'even') + '">';
+	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + '">';
 
 	    		//iterate throw array of data for <tr>
 	    		$.each(this, function(i, element) {
@@ -165,6 +165,9 @@
 
 	    		sBody += '</tr>';
 	    	});
+
+	    	//if nothing to show
+	    	if (!sBody) sBody = '<tr class="odd"><td valign="top" colspan="' + options.aaData[0].length + '" class="dataTables_empty">' + options.oLanguage.sZeroRecords + '</td></tr>';
 
 	    	return sBody;
     	},
