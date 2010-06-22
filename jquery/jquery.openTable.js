@@ -39,7 +39,7 @@
  * fnGetData() +
  * fnUpdate() +
  * fnAddDataAndDisplay()
- * fnGetPositionByValue()
+ * fnGetPositionByValue() +
  * fnGetNodes() +
  *
  *
@@ -131,7 +131,8 @@
     		fnGetPosition: $.openTable.fnGetPosition,
     		fnGetData: $.openTable.fnGetData,
     		fnUpdate: $.openTable.fnUpdate,
-    		fnGetNodes: $.openTable.fnGetNodes
+    		fnGetNodes: $.openTable.fnGetNodes,
+    		fnGetPositionByValue: $.openTable.fnGetPositionByValue
     	};
     };
 
@@ -505,7 +506,16 @@
     		if (!isNaN(iID)) {
     			return this.options.oTable.children('table').find('tr.iID' + iID)[0];
     		}
+    	},
 
+    	//fast search for sInput in iColumn in table data. Return record index. Used in editable.
+    	fnGetPositionByValue: function(sInput, iColumn) {
+    		for (var i = 0, length = this.options.aaData.length; i < length; i++) {
+    			if (this.options.aaData[i][iColumn] == sInput) {
+    				return i;
+    			}
+    		}
+    		return false;
     	},
 
     	_getRowID: function(oTR) {
