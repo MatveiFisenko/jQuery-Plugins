@@ -25,6 +25,7 @@
 
 /*
  * TODO:
+ * Add support for case-insensitive sorting - add .toUpperCase() in sorting function and new param to options
  *
  */
 
@@ -261,14 +262,11 @@
     	},
 
     	createInfo: function(options) {
-    		//options.oPager.iShownRecords
-    		var sInfo = options.oLanguage.sInfo
+    		return options.oLanguage.sInfo
     			.replace('_START_', (options.oPager.iTotalRecords === 0 ? 0 : (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + 1))
     			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage
     					+ options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage).length)
     			.replace('_TOTAL_', options.oPager.iTotalRecords) + (options.oPager.mSearch ? ' ' + options.oLanguage.sInfoFiltered.replace('_MAX_', options.aaData.length) : '');
-
-    		return sInfo;
     	},
 
     	updateTable: function(options) {
