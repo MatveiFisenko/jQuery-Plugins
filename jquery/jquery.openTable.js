@@ -197,32 +197,26 @@
     	},
 
     	selectPage: function(options, mObj) {
-    		var iCurrentPage;
+			//if parent is span container
+    		if (mObj.parent().is('span')) {
+    			//we clicked on already active element
+    			if (mObj.hasClass('paginate_active')) return false;
 
-    		if (mObj) {
-    			//if parent is span container
-	    		if (mObj.parent().is('span')) {
-	    			//we clicked on already active element
-	    			if (mObj.hasClass('paginate_active')) return false;
-
-	    			//current page is clicked page minus active page plus current page
-	    			iCurrentPage = mObj.index() - mObj.siblings('.paginate_active').index() + options.oPager.iCurrentPage;
-	    		}
-	    		else if (mObj.hasClass('first')) {
-	    			iCurrentPage = 1;
-	    		}
-	    		else if (mObj.hasClass('previous')) {
-	    			iCurrentPage = (options.oPager.iCurrentPage === 1 ? 1 : options.oPager.iCurrentPage - 1);
-	    		}
-	    		else if (mObj.hasClass('next')) {
-	    			iCurrentPage = (options.oPager.iCurrentPage === options.oPager.iTotalPages ? options.oPager.iCurrentPage : options.oPager.iCurrentPage + 1);
-	    		}
-	    		else if (mObj.hasClass('last')) {
-	    			iCurrentPage = options.oPager.iTotalPages;
-	    		}
+    			//current page is clicked page minus active page plus current page
+    			options.oPager.iCurrentPage = mObj.index() - mObj.siblings('.paginate_active').index() + options.oPager.iCurrentPage;
     		}
-
-    		options.oPager.iCurrentPage = iCurrentPage;
+    		else if (mObj.hasClass('first')) {
+    			options.oPager.iCurrentPage = 1;
+    		}
+    		else if (mObj.hasClass('previous')) {
+    			options.oPager.iCurrentPage = (options.oPager.iCurrentPage === 1 ? 1 : options.oPager.iCurrentPage - 1);
+    		}
+    		else if (mObj.hasClass('next')) {
+    			options.oPager.iCurrentPage = (options.oPager.iCurrentPage === options.oPager.iTotalPages ? options.oPager.iCurrentPage : options.oPager.iCurrentPage + 1);
+    		}
+    		else if (mObj.hasClass('last')) {
+    			options.oPager.iCurrentPage = options.oPager.iTotalPages;
+    		}
 
     		return true;
     	},
