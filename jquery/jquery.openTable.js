@@ -319,9 +319,9 @@
 
     	_fnFeatureHtmlPaginate: function(options) {
     		return '<div class="dataTables_paginate paging_full_numbers">' +
-    			'<span class="first paginate_button">Первая</span><span class="previous paginate_button">&lt;</span><span>'
+    			'<span class="first paginate_button">' + options.oLanguage.oPaginate.sFirst + '</span><span class="previous paginate_button">' + options.oLanguage.oPaginate.sPrevious + '</span><span>'
     			+ $.openTable.createPager(options) +
-    			'</span><span class="next paginate_button">&gt;</span><span class="last paginate_button">Последняя</span></div>';
+    			'</span><span class="next paginate_button">' + options.oLanguage.oPaginate.sNext + '</span><span class="last paginate_button">' + options.oLanguage.oPaginate.sLast + '</span></div>';
     	},
 
     	_fnFeatureHtmlTable: function(options) {
