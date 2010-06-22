@@ -27,6 +27,23 @@
  * TODO:
  * Add support for case-insensitive sorting - add .toUpperCase() in sorting function and new param to options
  *
+ * return oTable.fnSettings().aoColumns[oTable.fnGetPosition(this)[2]].sName;
+ * options.oTable.fnGetData(oTD.parentNode)[0]
+ * oTable.fnUpdate(sValue, aPos[0], aPos[2], false);
+ * return $(options.oTable.fnAddDataAndDisplay(aRowData).nTr);
+ * var iPosition = options.oTable.fnGetPositionByValue(aRowData[0], 0);
+ * return $(options.oTable.fnGetNodes(iPosition));
+ *
+ * fnSettings()
+ * fnGetPosition()
+ * fnGetData()
+ * fnUpdate()
+ * fnAddDataAndDisplay()
+ * fnGetPositionByValue()
+ * fnGetNodes()
+ *
+ *
+ *
  */
 
 (function($) {
@@ -107,7 +124,12 @@
     		return false;
     	});
 
-    	return this;
+    	return {
+    		options: options,
+
+    		fnSettings: $.openTable.fnSettings,
+    		fnGetPosition: $.openTable.fnGetPosition
+    	};
     };
 
     $.openTable = {
@@ -121,17 +143,7 @@
     		}
     		else {
     			//we need to check if we have hidden columns
-    			$.each(options.aoColumns, function(i) {
-	    			if (i <= iColumn) {
-	    				//if column is before selected and not visible - increment our iColumn
-	    				if (!this.bVisible) {
-	    					iColumn++;
-	    				}
-	        		}
-	    			else {
-	    				return false;
-	    			}
-	    		});
+    			$.openTable._getColumnHiddenIndex(options.aoColumns, iColumn);
 
     			//save current active column
     			if (options.aaSorting[0][0] !== iColumn) {
@@ -155,6 +167,23 @@
 	    	if (options.aaSorting[0][1] === 'desc') {
 	    		options.aaData.reverse();
 	    	}
+    	},
+
+    	//calculate column index including hidden columns
+    	_getColumnHiddenIndex: function(aoColumns, iColumn) {
+    		$.each(aoColumns, function(i) {
+    			if (i <= iColumn) {
+    				//if column is before selected and not visible - increment our iColumn
+    				if (!this.bVisible) {
+    					iColumn++;
+    				}
+        		}
+    			else {
+    				return false;
+    			}
+    		});
+
+    		return iColumn;
     	},
 
     	filterData: function(options, sSearch) {
@@ -190,7 +219,7 @@
 	    	var sBody = '';
 
 	    	$.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
-	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + '">';
+	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + ' iID' + i + '">';
 
 	    		//iterate throw array of data for <tr>
 	    		$.each(this, function(i, element) {
@@ -402,6 +431,19 @@
 
         	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '"><thead><tr>' + sHeader + '</tr></thead><tbody>'
         		+ $.openTable.createTBody(options) + '</tbody></table>';
+    	},
+
+    	//user accessible functions
+    	fnSettings: function() {
+    		return { aoColumns: this.options.aoColumns };
+    	},
+
+    	fnGetPosition: function(oTD) {
+    		oTD = $(oTD);
+
+    		if (oTD.is('td')) {
+    			return [ +oTD.parent().attr('class').match(/iID(\d+)/)[1], oTD.index(), $.openTable._getColumnHiddenIndex(this.options.aoColumns, oTD.index()) ];
+    		}
     	}
 
     };
