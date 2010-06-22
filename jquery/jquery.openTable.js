@@ -55,6 +55,8 @@
         	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
         	//update pager
         	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+        	//update info
+        	$(this).parents('div.dDataTable').find('div.dataTables_info').html($.openTable.createInfo(options));
 
     		return false;
     	});
@@ -68,11 +70,12 @@
     		options.oPager.iTotalPages = Math.ceil(options.oPager.iTotalRecords / options.oPager.iRecordsPerPage);
     		//update pager
         	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
-
         	//update body
         	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
         	//update pager
         	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+        	//update info
+        	$(this).parents('div.dDataTable').find('div.dataTables_info').html($.openTable.createInfo(options));
 
         	return false;
     	});
@@ -89,6 +92,8 @@
         	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
     		//update pager
         	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+        	//update info
+        	$(this).parents('div.dDataTable').find('div.dataTables_info').html($.openTable.createInfo(options));
 
     		return false;
     	});
@@ -137,6 +142,8 @@
     			options.afData = options.asData;
     		}
 
+    		//recalculate pager data after each filter
+			options.oPager.iCurrentPage = 1;
     		options.oPager.iTotalRecords = options.afData.length;
     		options.oPager.iTotalPages = Math.ceil(options.oPager.iTotalRecords / options.oPager.iRecordsPerPage);
     	},
@@ -214,20 +221,27 @@
 	    			iCurrentPage = options.oPager.iTotalPages;
 	    		}
     		}
-    		else {
-    			iCurrentPage = 1;
-    		}
 
     		options.oPager.iCurrentPage = iCurrentPage;
 
     		return true;
     	},
 
+    	createInfo: function(options) {
+    		//options.oPager.iShownRecords
+    		var sInfo = options.oLanguage.sInfo
+    			.replace('_START_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + 1)
+    			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage
+    					+ options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage).length)
+    			.replace('_TOTAL_', options.oPager.iTotalRecords);
+
+    		return sInfo;
+    	},
+
     	showTable: function(options) {
     		//sort & filter data
         	$.openTable.sortData(options);
         	$.openTable.filterData(options);
-        	$.openTable.selectPage(options);
 
     		//compatibility with dataTables code
     		var nInsertNode = this;
@@ -320,7 +334,7 @@
     	},
 
     	_fnFeatureHtmlInfo: function(options) {
-    		return '<div class="dataTables_info">' + options.oLanguage.sInfo + 'TODO</div>';
+    		return '<div class="dataTables_info">' + $.openTable.createInfo(options) + '</div>';
     	},
 
     	_fnFeatureHtmlPaginate: function(options) {
