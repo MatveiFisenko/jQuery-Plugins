@@ -34,13 +34,13 @@
  * var iPosition = options.oTable.fnGetPositionByValue(aRowData[0], 0);
  * return $(options.oTable.fnGetNodes(iPosition));
  *
- * fnSettings()
- * fnGetPosition()
- * fnGetData()
- * fnUpdate()
+ * fnSettings() +
+ * fnGetPosition() +
+ * fnGetData() +
+ * fnUpdate() +
  * fnAddDataAndDisplay()
  * fnGetPositionByValue()
- * fnGetNodes()
+ * fnGetNodes() +
  *
  *
  *
@@ -128,7 +128,10 @@
     		options: options,
 
     		fnSettings: $.openTable.fnSettings,
-    		fnGetPosition: $.openTable.fnGetPosition
+    		fnGetPosition: $.openTable.fnGetPosition,
+    		fnGetData: $.openTable.fnGetData,
+    		fnUpdate: $.openTable.fnUpdate,
+    		fnGetNodes: $.openTable.fnGetNodes
     	};
     };
 
@@ -434,16 +437,79 @@
     	},
 
     	//user accessible functions
+
+    	//only aoColumns are returned
     	fnSettings: function() {
     		return { aoColumns: this.options.aoColumns };
     	},
 
-    	fnGetPosition: function(oTD) {
-    		oTD = $(oTD);
+    	//tr, td are supported
+    	fnGetPosition: function(oEl) {
+    		oEl = $(oEl);
 
-    		if (oTD.is('td')) {
-    			return [ +oTD.parent().attr('class').match(/iID(\d+)/)[1], oTD.index(), $.openTable._getColumnHiddenIndex(this.options.aoColumns, oTD.index()) ];
+    		if (oEl.is('td')) {
+    			return [ $.openTable._getRowID(oEl.parent()), oEl.index(), $.openTable._getColumnHiddenIndex(this.options.aoColumns, oEl.index()) ];
     		}
+    		else {
+    			return [ $.openTable._getRowID(oEl) ];
+    		}
+    	},
+
+    	//tr, int and nothing are supported
+    	fnGetData: function(oTR) {
+    		if (oTR.nodeName && oTR.nodeName.toUpperCase() === 'TR') {
+	    		return this.options.aaData[ $.openTable._getRowID($(oTR)) ];
+    		}
+    		else if (!isNaN(oTR)) {
+    			return this.options.aaData[ $oTR ];
+    		}
+    		else {
+    			return this.options.aaData;
+    		}
+    	},
+
+    	fnUpdate: function(mData, mRow, iColumn, bRedraw) {
+    		var oTR;
+    		//if it is not int
+    		if (isNaN(mRow)) {
+    			oTR = $(mRow);
+
+    			mRow = this.fnGetPosition(mRow);
+    		}
+    		else {
+    			//because nth-child starts from 1
+    			oTR = this.options.oTable.children('table').find('tr:nth-child(' + (mRow + 1) +')');
+    		}
+    		console.log(mRow);
+
+    		if ($.isArray(mData)) {
+    			this.options.aaData[ mRow ] = mData;
+
+    			$.each(mData, function(i) {
+    				oTR.child('td:nth-child(' + (i + 1) +')').html(this);
+    			});
+
+    			return 0;
+    		}
+    		else if (!isNaN(iColumn)) {
+    			this.options.aaData[ mRow ][ iColumn ] = mData;
+    			oTR.children('td:nth-child(' + (iColumn + 1) +')').html(mData);
+
+    			return 0;
+    		}
+
+    	},
+
+    	//only call using iID supported
+    	fnGetNodes: function(iID) {
+    		if (!isNaN(iID)) {
+    			return this.options.oTable.children('table').find('tr.iID' + iID)[0];
+    		}
+
+    	},
+
+    	_getRowID: function(oTR) {
+    		return +oTR.attr('class').match(/iID(\d+)/)[1];
     	}
 
     };
