@@ -12,7 +12,7 @@ var oDataTableDefaults = {
 	"oLanguage": {
 		"sLengthMenu": "Выводить _MENU_ записей на страницу",
 		"sProcessing": 'Работаем с данными',
-		"sZeroRecords": "Нет такой буквы",
+		"sZeroRecords": "Нет таких записей",
 		"sInfo": "Вывожу с _START_ по _END_ из _TOTAL_ записей",
 		"sInfoEmpty": "Вывожу с 0 по 0 из 0 записей",
 		"sInfoFiltered": "(найдено из _MAX_ записей)",
