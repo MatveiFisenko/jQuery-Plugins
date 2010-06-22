@@ -115,6 +115,7 @@
     	sortData: function(options, iColumn) {
 	    	//column used for sorting
     		if (isNaN(iColumn)) {
+    			//used at startup
     			iColumn = options.aaSorting[0][0];
     		}
     		else {
