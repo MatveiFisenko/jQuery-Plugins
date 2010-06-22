@@ -137,9 +137,11 @@
 	    			}
 	    			return false;
 	    		});
+	    		options.oPager.bSearch = true;
     		}
     		else {
     			options.afData = options.asData;
+    			options.oPager.bSearch = false;
     		}
 
     		//recalculate pager data after each filter
@@ -230,7 +232,7 @@
     			.replace('_START_', (options.oPager.iTotalRecords === 0 ? 0 : (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + 1))
     			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage
     					+ options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage).length)
-    			.replace('_TOTAL_', options.oPager.iTotalRecords);
+    			.replace('_TOTAL_', options.oPager.iTotalRecords) + (options.oPager.bSearch ? ' ' + options.oLanguage.sInfoFiltered.replace('_MAX_', options.aaData.length) : '');
 
     		return sInfo;
     	},
