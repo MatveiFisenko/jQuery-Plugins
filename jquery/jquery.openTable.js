@@ -62,6 +62,12 @@
     	//records per page
     	this.find('div.dataTables_length select').change(function() {
     		options.oPager.iRecordsPerPage = this.value;
+    		//set current page to 1
+    		options.oPager.iCurrentPage = 1;
+    		//recalculate total pages
+    		options.oPager.iTotalPages = Math.ceil(options.oPager.iTotalRecords / options.oPager.iRecordsPerPage);
+    		//update pager
+        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
 
         	//update body
         	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
