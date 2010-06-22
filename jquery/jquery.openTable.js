@@ -95,10 +95,8 @@
     	sortData: function(options) {
 	    	//column used for sorting
     		var iColumn = options.aaSorting[0][0];
-    		//store sorted data in separate var
-    		options.asData = options.aaData;
     		//sort array of data
-    		options.asData.sort(function(a, b) {
+    		options.aaData.sort(function(a, b) {
     			if (a[iColumn] > b[iColumn]) {
     				return 1;
     			}
@@ -108,7 +106,7 @@
 	    	});
 	    	//reverse if order is desc
 	    	if (options.aaSorting[0][1] === 'desc') {
-	    		options.asData.reverse();
+	    		options.aaData.reverse();
 	    	}
     	},
 
@@ -117,7 +115,7 @@
     		//prepare search string - make it uppercase to avoid bugs with russian language - /i modifier do not work properly
     		if (sSearch) {
 	    		sSearch = new RegExp(sSearch.toUpperCase(), 'i');
-	    		options.afData = options.asData.filter(function(element) {
+	    		options.afData = options.aaData.filter(function(element) {
 	    			for (var i = 0, iLength = element.length; i < iLength; i++) {
 	    				if (element[i].search(sSearch) > -1) {
 	        				return true;
@@ -128,7 +126,7 @@
 	    		options.oPager.bSearch = true;
     		}
     		else {
-    			options.afData = options.asData;
+    			options.afData = options.aaData;
     			options.oPager.bSearch = false;
     		}
 
