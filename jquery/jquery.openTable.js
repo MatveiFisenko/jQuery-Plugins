@@ -51,22 +51,40 @@
     	this.find('div.dataTables_filter input').keyup(function() {
 			//filter data
 			$.openTable.filterData(options, this.value);
-        	//create body
-        	var sBody = $.openTable.createTBody(options);
         	//update body
-        	$(this).parents('div.dDataTable').find('table tbody').html(sBody);
+        	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
+        	//update pager
+        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
 
     		return false;
     	});
 
-    	//page per page
+    	//records per page
     	this.find('div.dataTables_length select').change(function() {
-    		options.recordsPerPage = this.value;
+    		options.oPager.iRecordsPerPage = this.value;
 
-    		//create body
-        	var sBody = $.openTable.createTBody(options);
         	//update body
-        	$(this).parents('div.dDataTable').find('table tbody').html(sBody);
+        	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
+        	//update pager
+        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+
+        	return false;
+    	});
+
+    	//pager
+    	this.find('div.dataTables_paginate').click(function(e) {
+    		var oSpan = $(e.target);
+    		//if we clicked on not-td element
+    		if (!oSpan.is('span')) return;
+
+    		//select page
+    		$.openTable.selectPage(options, oSpan);
+        	//update body
+        	$(this).parents('div.dDataTable').find('table tbody').html($.openTable.createTBody(options));
+    		//update pager
+        	$(this).parents('div.dDataTable').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+
+    		return false;
     	});
 
     	return this;
@@ -113,14 +131,15 @@
     			options.afData = options.asData;
     		}
 
-    		options.aTotalPages = options.afData.length;
+    		options.oPager.iTotalRecords = options.afData.length;
+    		options.oPager.iTotalPages = Math.ceil(options.oPager.iTotalRecords / options.oPager.iRecordsPerPage);
     	},
 
-    	createTBody: function (options) {
+    	createTBody: function(options) {
 	    	//create table data
 	    	var sBody = '';
 
-	    	$.each(options.afData.slice(0, options.recordsPerPage), function(i, element) {
+	    	$.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
 	    		sBody += '<tr class="' + (i % 2 ? 'odd' : 'even') + '">';
 
 	    		//iterate throw array of data for <tr>
@@ -137,7 +156,55 @@
 	    	return sBody;
     	},
 
+    	createPager: function(options) {
+    		var sPager = '';
+    		//show 5 buttons
+    		var iPages = options.oPager.iCurrentPage + 4;
+    		if (iPages > options.oPager.iTotalPages) iPages = options.oPager.iTotalPages;
+
+    		for (var i = options.oPager.iCurrentPage; i <= iPages; i++) {
+    			sPager += '<span class="' + (i === options.oPager.iCurrentPage ? 'paginate_active' : 'paginate_button') + '">' + i + '</span>';
+    		}
+
+    		return sPager;
+    	},
+
+    	selectPage: function(options, mObj) {
+    		var iCurrentPage;
+
+    		if (mObj) {
+	    		if (mObj.parent().is('span')) {
+	    			//selected page number
+	    			iCurrentPage = mObj.parent().children().index(mObj) + options.oPager.iCurrentPage;
+	    		}
+	    		else if (mObj.hasClass('first')) {
+	    			iCurrentPage = 1;
+	    		}
+	    		else if (mObj.hasClass('previous')) {
+	    			iCurrentPage = (options.oPager.iCurrentPage === 1 ? 1 : options.oPager.iCurrentPage - 1);
+	    		}
+	    		else if (mObj.hasClass('next')) {
+	    			iCurrentPage = (options.oPager.iCurrentPage === options.oPager.iTotalPages ? options.oPager.iCurrentPage : options.oPager.iCurrentPage + 1);
+	    		}
+	    		else if (mObj.hasClass('last')) {
+	    			iCurrentPage = options.oPager.iTotalPages;
+	    		}
+    		}
+    		else {
+    			iCurrentPage = 1;
+    		}
+
+    		console.log(iCurrentPage);
+
+    		options.oPager.iCurrentPage = iCurrentPage;
+    	},
+
     	showTable: function(options) {
+    		//sort & filter data
+        	$.openTable.sortData(options);
+        	$.openTable.filterData(options);
+        	$.openTable.selectPage(options);
+
     		//compatibility with dataTables code
     		var nInsertNode = this;
     		/* Loop over the user set positioning and place the elements as needed */
@@ -233,7 +300,10 @@
     	},
 
     	_fnFeatureHtmlPaginate: function(options) {
-    		return '<div class="dataTables_paginate paging_full_numbers">' + 'TODO' + '</div>';
+    		return '<div class="dataTables_paginate paging_full_numbers">' +
+    			'<span class="first paginate_button">Первая</span><span class="previous paginate_button">&lt;</span><span>'
+    			+ $.openTable.createPager(options) +
+    			'</span><span class="next paginate_button">&gt;</span><span class="last paginate_button">Последняя</span></div>';
     	},
 
     	_fnFeatureHtmlTable: function(options) {
@@ -254,9 +324,6 @@
 
         	sHeader +='</tr></thead>';
 
-        	//prepare data for body
-        	$.openTable.sortData(options);
-        	$.openTable.filterData(options);
         	//create body
         	var sBody = $.openTable.createTBody(options);
 
@@ -266,6 +333,6 @@
     };
 
 	//default options used
-    $.openTable.defaultOptions = { className: 'display', recordsPerPage: 10, oFeatures: { bFilter: true, bInfo: true, bLengthChange: true, bPaginate: true } };
+    $.openTable.defaultOptions = { className: 'display', oPager: { iRecordsPerPage: 10 }, oFeatures: { bFilter: true, bInfo: true, bLengthChange: true, bPaginate: true } };
 
 })(jQuery);
