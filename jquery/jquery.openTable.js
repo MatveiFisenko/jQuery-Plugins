@@ -124,6 +124,7 @@
     		return false;
     	});
 
+    	//return openTable object
     	return {
     		options: options,
 
@@ -175,29 +176,17 @@
 	    	}
     	},
 
-    	//calculate column index including hidden columns
-    	_getColumnHiddenIndex: function(aoColumns, iColumn) {
+    	/**
+    	 * calculate column index including hidden columns
+    	 * usage - without bSw get column index in aoColumns array using column index in displayed table
+    	 * with bSw == true get column index in displayed table using column index in aoColumns
+    	 */
+    	_getColumnHiddenIndex: function(aoColumns, iColumn, bSw) {
     		$.each(aoColumns, function(i) {
     			if (i < iColumn) {
     				//if column is before selected and not visible - increment our iColumn
     				if (!this.bVisible) {
-    					iColumn++;
-    				}
-        		}
-    			else {
-    				return false;
-    			}
-    		});
-
-    		return iColumn;
-    	},
-
-    	_getColumnWithoutHiddenIndex: function(aoColumns, iColumn) {
-    		$.each(aoColumns, function(i) {
-    			if (i < iColumn) {
-    				//if column is before selected and not visible - increment our iColumn
-    				if (!this.bVisible) {
-    					iColumn--;
+    					bSw ? iColumn-- : iColumn++;
     				}
         		}
     			else {
@@ -240,7 +229,7 @@
 	    	//create table data
 	    	var sBody = '';
 
-	    	$.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
+	    	options.oPager.iShownRecords = $.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
 	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + '">';
 
 	    		//iterate throw array of data for <tr>
@@ -252,7 +241,7 @@
 	    		});
 
 	    		sBody += '</tr>';
-	    	});
+	    	}).length;
 
 	    	//if nothing to show
 	    	if (!sBody) sBody = '<tr class="odd"><td valign="top" colspan="' + options.aaData[0].length + '" class="dataTables_empty">' + options.oLanguage.sZeroRecords + '</td></tr>';
@@ -312,15 +301,16 @@
     		return true;
     	},
 
+    	//jump to page where we  have record with iIndex index
     	jumpToPageWithRecord: function(options, iIndex) {
     		options.oPager.iCurrentPage = Math.floor(iIndex / options.oPager.iRecordsPerPage) || 1;
     	},
 
+    	//create info module
     	createInfo: function(options) {
     		return options.oLanguage.sInfo
     			.replace('_START_', (options.oPager.iTotalRecords === 0 ? 0 : (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + 1))
-    			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage
-    					+ options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage).length)
+    			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + options.oPager.iShownRecords)
     			.replace('_TOTAL_', options.oPager.iTotalRecords) + (options.oPager.mSearch ? ' ' + options.oLanguage.sInfoFiltered.replace('_MAX_', options.aaData.length) : '');
     	},
 
@@ -515,7 +505,7 @@
     		}
     		else if (!isNaN(iColumn)) {
     			this.options.aaData[ mRow ][ iColumn ] = mData;
-    			oTR.children('td:nth-child(' + ($.openTable._getColumnWithoutHiddenIndex(this.options.aoColumns, iColumn) + 1) +')').html(mData);
+    			oTR.children('td:nth-child(' + ($.openTable._getColumnHiddenIndex(this.options.aoColumns, iColumn, true) + 1) +')').html(mData);
 
     			return 0;
     		}
