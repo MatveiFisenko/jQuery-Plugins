@@ -333,7 +333,7 @@
     		/* Loop over the user set positioning and place the elements as needed */
 			var aDom = options.sDom.split('');
 
-			var nTmp, iPushFeature, cOption, cNext, sClass, j;
+			var nTmp, iPushFeature, cOption, cNext, sClass;
 			for ( var i = 0, iLength = aDom.length ; i < iLength ; i++ )
 			{
 				iPushFeature = 0;
@@ -347,14 +347,12 @@
 					cNext = aDom[i+1];
 					if ( cNext == "'" || cNext == '"' )
 					{
-						sClass = "";
-						j = 2;
-						while ( aDom[i+j] != cNext )
-						{
-							sClass += aDom[i+j];
-							j++;
-						}
-						i += j; /* Move along the position array */
+						//increment pointer to quote + 1
+						i += 2;
+
+						sClass = options.sDom.substring(i, options.sDom.indexOf(cNext, i));
+
+						i += sClass.length;
 					}
 
 					nInsertNode = $('<div class="' + sClass + '"></div>').appendTo(nInsertNode);
@@ -410,8 +408,9 @@
     	},
 
     	_fnFeatureHtmlLength: function(options) {
-    		var sSelect = '<select><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>';
-    		return '<div class="dataTables_length">' + options.oLanguage.sLengthMenu.replace('_MENU_', sSelect) + '</div>';
+    		return '<div class="dataTables_length">' + options.oLanguage.sLengthMenu.replace('_MENU_',
+    			'<select><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>')
+    			+ '</div>';
     	},
 
     	_fnFeatureHtmlFilter: function(options) {
