@@ -128,7 +128,7 @@
     	});
 
     	//return openTable object
-    	return {
+    	return $.extend(this.children('table'), {
     		options: options,
 
     		fnSettings: $.openTable.fnSettings,
@@ -139,7 +139,7 @@
     		fnGetPositionByValue: $.openTable.fnGetPositionByValue,
     		fnAddDataAndDisplay: $.openTable.fnAddDataAndDisplay,
     		_getRowID: $.openTable._getRowID
-    	};
+    	});
     };
 
     $.openTable = {
@@ -426,7 +426,7 @@
         		}
         	});
 
-        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '"><thead><tr>' + sHeader + '</tr></thead><tbody>'
+        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '" id="t' +  options.oTable[0].id + '"><thead><tr>' + sHeader + '</tr></thead><tbody>'
         		+ $.openTable.createTBody(options) + '</tbody></table>';
     	},
 
