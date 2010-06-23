@@ -537,7 +537,9 @@
     	},
 
     	_getRowID: function(oTR) {
-    		return oTR.index() + (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage;
+    		//if we use filter it becomes a little harder, we need to get index value from afData first, then find matching data in aaData
+    		return (this.options.oPager.mSearch ? this.fnGetPositionByValue(this.options.afData[ oTR.index() + (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage ][0], 0)
+    			: oTR.index() + (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage);
     	}
 
     };
