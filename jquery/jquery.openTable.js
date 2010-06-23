@@ -328,83 +328,62 @@
         	$.openTable.sortData(options);
         	$.openTable.filterData(options);
 
-    		//compatibility with dataTables code
-    		var nInsertNode = this;
-    		/* Loop over the user set positioning and place the elements as needed */
-			var aDom = options.sDom.split('');
+    		//refactored from dataTables code
+			var nInsertNode = this, aDom = options.sDom.split(''),
+				nTmp, cNext, sClass;
 
-			var nTmp, iPushFeature, cOption, cNext, sClass;
-			for ( var i = 0, iLength = aDom.length ; i < iLength ; i++ )
-			{
-				iPushFeature = 0;
-				cOption = aDom[i];
-
-				if ( cOption == '<' )
-				{
+			for (var i = 0, iLength = aDom.length; i < iLength; i++) {
+				if (aDom[i] == '<') {
 					/* New container div */
-
 					/* Check to see if we should append a class name to the container */
 					cNext = aDom[i+1];
-					if ( cNext == "'" || cNext == '"' )
-					{
+					if (cNext == "'" || cNext == '"') {
 						//increment pointer to quote + 1
 						i += 2;
-
 						sClass = options.sDom.substring(i, options.sDom.indexOf(cNext, i));
-
+						//increment pointer to class length
 						i += sClass.length;
+					}
+					else {
+						sClass = '';
 					}
 
 					nInsertNode = $('<div class="' + sClass + '"></div>').appendTo(nInsertNode);
 				}
-				else if ( cOption == '>' )
-				{
+				else if (aDom[i] == '>') {
 					/* End container div */
 					nInsertNode = nInsertNode.parent();
 				}
-				else if ( cOption == 'l' && options.oFeatures.bPaginate && options.oFeatures.bLengthChange )
-				{
+				else if (aDom[i] == 'l' && options.oFeatures.bPaginate && options.oFeatures.bLengthChange) {
 					/* Length */
-					nTmp = $.openTable._fnFeatureHtmlLength( options );
-					iPushFeature = 1;
+					nTmp = $.openTable._fnFeatureHtmlLength(options);
 				}
-				else if ( cOption == 'f' && options.oFeatures.bFilter )
-				{
+				else if (aDom[i] == 'f' && options.oFeatures.bFilter) {
 					/* Filter */
-					nTmp = $.openTable._fnFeatureHtmlFilter( options );
-					iPushFeature = 1;
+					nTmp = $.openTable._fnFeatureHtmlFilter(options);
 				}
-				else if ( cOption == 'r' && options.oFeatures.bProcessing )
-				{
+				else if (aDom[i] == 'r' && options.oFeatures.bProcessing) {
 					/* pRocessing */
 					//do nothing
 				}
-				else if ( cOption == 't' )
-				{
+				else if (aDom[i] == 't') {
 					/* Table */
-					nTmp = $.openTable._fnFeatureHtmlTable( options );
-					iPushFeature = 1;
+					nTmp = $.openTable._fnFeatureHtmlTable(options);
 				}
-				else if ( cOption ==  'i' && options.oFeatures.bInfo )
-				{
+				else if (aDom[i] ==  'i' && options.oFeatures.bInfo) {
 					/* Info */
-					nTmp = $.openTable._fnFeatureHtmlInfo( options );
-					iPushFeature = 1;
+					nTmp = $.openTable._fnFeatureHtmlInfo(options);
 				}
-				else if ( cOption == 'p' && options.oFeatures.bPaginate )
-				{
+				else if (aDom[i] == 'p' && options.oFeatures.bPaginate) {
 					/* Pagination */
-					nTmp = $.openTable._fnFeatureHtmlPaginate( options );
-					iPushFeature = 1;
+					nTmp = $.openTable._fnFeatureHtmlPaginate(options);
 				}
 
-				/* Add to the 2D features array */
-				if ( iPushFeature == 1 )
-				{
+				if (nTmp) {
 					nInsertNode.append(nTmp);
+					nTmp = false;
 				}
 			}
-
     	},
 
     	_fnFeatureHtmlLength: function(options) {
