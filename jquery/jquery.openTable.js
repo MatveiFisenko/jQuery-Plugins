@@ -132,7 +132,9 @@
     		fnGetData: $.openTable.fnGetData,
     		fnUpdate: $.openTable.fnUpdate,
     		fnGetNodes: $.openTable.fnGetNodes,
-    		fnGetPositionByValue: $.openTable.fnGetPositionByValue
+    		fnGetPositionByValue: $.openTable.fnGetPositionByValue,
+    		fnAddDataAndDisplay: $.openTable.fnAddDataAndDisplay,
+    		_getRowID: $.openTable._getRowID
     	};
     };
 
@@ -190,6 +192,22 @@
     		return iColumn;
     	},
 
+    	_getColumnWithoutHiddenIndex: function(aoColumns, iColumn) {
+    		$.each(aoColumns, function(i) {
+    			if (i < iColumn) {
+    				//if column is before selected and not visible - increment our iColumn
+    				if (!this.bVisible) {
+    					iColumn--;
+    				}
+        		}
+    			else {
+    				return false;
+    			}
+    		});
+
+    		return iColumn;
+    	},
+
     	filterData: function(options, sSearch) {
     		//feature - it searches in hidden columns too
     		if (sSearch || (sSearch === false && options.oPager.mSearch)) {
@@ -223,7 +241,7 @@
 	    	var sBody = '';
 
 	    	$.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
-	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + ' iID' + i + '">';
+	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + '">';
 
 	    		//iterate throw array of data for <tr>
 	    		$.each(this, function(i, element) {
@@ -292,6 +310,10 @@
     		}
 
     		return true;
+    	},
+
+    	jumpToPageWithRecord: function(options, iIndex) {
+    		options.oPager.iCurrentPage = Math.floor(iIndex / options.oPager.iRecordsPerPage) || 1;
     	},
 
     	createInfo: function(options) {
@@ -449,17 +471,17 @@
     		oEl = $(oEl);
 
     		if (oEl.is('td')) {
-    			return [ $.openTable._getRowID(oEl.parent()), oEl.index(), $.openTable._getColumnHiddenIndex(this.options.aoColumns, oEl.index()) ];
+    			return [ this._getRowID(oEl.parent()), oEl.index(), $.openTable._getColumnHiddenIndex(this.options.aoColumns, oEl.index()) ];
     		}
     		else {
-    			return [ $.openTable._getRowID(oEl) ];
+    			return [ this._getRowID(oEl) ];
     		}
     	},
 
     	//tr, int and nothing are supported
     	fnGetData: function(oTR) {
     		if (oTR.nodeName && oTR.nodeName.toUpperCase() === 'TR') {
-	    		return this.options.aaData[ $.openTable._getRowID($(oTR)) ];
+	    		return this.options.aaData[ this._getRowID($(oTR)) ];
     		}
     		else if (!isNaN(oTR)) {
     			return this.options.aaData[ $oTR ];
@@ -479,9 +501,8 @@
     		}
     		else {
     			//because nth-child starts from 1
-    			oTR = this.options.oTable.children('table').find('tr:nth-child(' + (mRow + 1) +')');
+    			oTR = this.options.oTable.children('table').find('tr:nth-child(' + (mRow - (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage + 1) +')');
     		}
-    		console.log(mRow);
 
     		if ($.isArray(mData)) {
     			this.options.aaData[ mRow ] = mData;
@@ -494,7 +515,7 @@
     		}
     		else if (!isNaN(iColumn)) {
     			this.options.aaData[ mRow ][ iColumn ] = mData;
-    			oTR.children('td:nth-child(' + (iColumn + 1) +')').html(mData);
+    			oTR.children('td:nth-child(' + ($.openTable._getColumnWithoutHiddenIndex(this.options.aoColumns, iColumn) + 1) +')').html(mData);
 
     			return 0;
     		}
@@ -504,7 +525,7 @@
     	//only call using iID supported
     	fnGetNodes: function(iID) {
     		if (!isNaN(iID)) {
-    			return this.options.oTable.children('table').find('tr.iID' + iID)[0];
+    			return this.options.oTable.children('table').children('tbody').children('tr:nth-child(' + (iID - (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage + 1) +')')[0];
     		}
     	},
 
@@ -518,8 +539,23 @@
     		return false;
     	},
 
+    	fnAddDataAndDisplay: function(aRowData) {
+    		this.options.aaData.push(aRowData);
+
+    		$.openTable.sortData(this.options);
+    		$.openTable.filterData(this.options);
+
+    		//get index after sorting
+    		var iIndex = this.fnGetPositionByValue(aRowData[0], 0);
+
+    		$.openTable.jumpToPageWithRecord(this.options, iIndex);
+			$.openTable.updateTable(this.options);
+
+			return { nTr: this.fnGetNodes(iIndex), iPos: iIndex };
+    	},
+
     	_getRowID: function(oTR) {
-    		return +oTR.attr('class').match(/iID(\d+)/)[1];
+    		return oTR.index() + (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage;
     	}
 
     };
