@@ -485,9 +485,16 @@
     		if ($.isArray(mData)) {
     			this.options.aaData[ mRow ] = mData;
 
+    			var iHiddenCount = 0, oTable = this;
     			if (bRedraw !== false) {
-	    			$.each(mData, function(i) {
-	    				oTR.child('td:nth-child(' + (i + 1) +')').html(this);
+	    			$.each(mData, function(i, element) {
+	    				//check if column is visible
+		    			if (oTable.options.aoColumns[i].bVisible) {
+		    				oTR.children('td:nth-child(' + (i + iHiddenCount + 1) +')').html(element);
+		        		}
+		    			else {
+		    				iHiddenCount--;
+		    			}
 	    			});
     			}
 
