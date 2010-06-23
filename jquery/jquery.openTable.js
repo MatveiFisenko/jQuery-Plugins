@@ -216,7 +216,7 @@
 	    	//create table data
 	    	var sBody = '';
 
-	    	options.oPager.iShownRecords = $.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
+	    	$.each(options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage), function(i, element) {
 	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + '">';
 
 	    		//iterate throw array of data for <tr>
@@ -228,7 +228,7 @@
 	    		});
 
 	    		sBody += '</tr>';
-	    	}).length;
+	    	});
 
 	    	//if nothing to show
 	    	if (!sBody) sBody = '<tr class="odd"><td valign="top" colspan="' + options.aaData[0].length + '" class="dataTables_empty">' + options.oLanguage.sZeroRecords + '</td></tr>';
@@ -297,7 +297,8 @@
     	createInfo: function(options) {
     		return options.oLanguage.sInfo
     			.replace('_START_', (options.oPager.iTotalRecords === 0 ? 0 : (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + 1))
-    			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage + options.oPager.iShownRecords)
+    			.replace('_END_', (options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage
+    					+ options.afData.slice((options.oPager.iCurrentPage - 1) * options.oPager.iRecordsPerPage, options.oPager.iCurrentPage * options.oPager.iRecordsPerPage).length)
     			.replace('_TOTAL_', options.oPager.iTotalRecords) + (options.oPager.mSearch ? ' ' + options.oLanguage.sInfoFiltered.replace('_MAX_', options.aaData.length) : '');
     	},
 
