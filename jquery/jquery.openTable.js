@@ -113,7 +113,7 @@
 
     	//return openTable object
     	return $.extend(this.children('table'), {
-    		options: options,
+    		otData: options,
 
     		fnSettings: $.openTable.fnSettings,
     		fnGetPosition: $.openTable.fnGetPosition,
@@ -419,7 +419,7 @@
 
     	//only aoColumns are returned
     	fnSettings: function() {
-    		return { aoColumns: this.options.aoColumns };
+    		return { aoColumns: this.otData.aoColumns };
     	},
 
     	//tr, td are supported
@@ -427,7 +427,7 @@
     		oEl = $(oEl);
 
     		if (oEl.is('td')) {
-    			return [ this._getRowID(oEl.parent()), oEl.index(), $.openTable._getColumnHiddenIndex(this.options.aoColumns, oEl.index()) ];
+    			return [ this._getRowID(oEl.parent()), oEl.index(), $.openTable._getColumnHiddenIndex(this.otData.aoColumns, oEl.index()) ];
     		}
     		else {
     			return [ this._getRowID(oEl) ];
@@ -437,13 +437,13 @@
     	//tr, int and nothing are supported
     	fnGetData: function(mObj) {
     		if (mObj.nodeName && mObj.nodeName.toUpperCase() === 'TR') {
-	    		return this.options.aaData[ this._getRowID($(mObj)) ];
+	    		return this.otData.aaData[ this._getRowID($(mObj)) ];
     		}
     		else if (!isNaN(mObj)) {
-    			return this.options.aaData[ mObj ];
+    			return this.otData.aaData[ mObj ];
     		}
     		else {
-    			return this.options.aaData;
+    			return this.otData.aaData;
     		}
     	},
 
@@ -468,7 +468,7 @@
     		}
 
     		if ($.isArray(mData)) {
-    			this.options.aaData[ mRow ] = mData;
+    			this.otData.aaData[ mRow ] = mData;
 
     			var iHiddenCount = 0, oTable = this;
     			if (bRedraw !== false) {
@@ -486,10 +486,10 @@
     			return 0;
     		}
     		else if (!isNaN(iColumn)) {
-    			this.options.aaData[ mRow ][ iColumn ] = mData;
+    			this.otData.aaData[ mRow ][ iColumn ] = mData;
 
     			if (bRedraw !== false) {
-    				oTR.children('td:nth-child(' + ($.openTable._getColumnHiddenIndex(this.options.aoColumns, iColumn, true) + 1) +')').html(mData);
+    				oTR.children('td:nth-child(' + ($.openTable._getColumnHiddenIndex(this.otData.aoColumns, iColumn, true) + 1) +')').html(mData);
     			}
 
     			return 0;
@@ -503,7 +503,7 @@
     		if (!isNaN(iID)) {
     			//because nth-child starts from 1
     			return this.children('tbody')
-    				.children('tr:nth-child(' + (iID - (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage + 1) +')')[0];
+    				.children('tr:nth-child(' + (iID - (this.otData.oPager.iCurrentPage - 1) * this.otData.oPager.iRecordsPerPage + 1) +')')[0];
     		}
     		else {
     			return this.children('tbody').children('tr');
@@ -512,8 +512,8 @@
 
     	//fast search for sInput in iColumn in table data. Return record index. Used in editable to get aaData index using unique record index
     	fnGetPositionByValue: function(sInput, iColumn) {
-    		for (var i = 0, length = this.options.aaData.length; i < length; i++) {
-    			if (this.options.aaData[i][iColumn] == sInput) {
+    		for (var i = 0, length = this.otData.aaData.length; i < length; i++) {
+    			if (this.otData.aaData[i][iColumn] == sInput) {
     				return i;
     			}
     		}
@@ -522,24 +522,25 @@
 
     	//add data and display it
     	fnAddDataAndDisplay: function(aRowData) {
-    		this.options.aaData.push(aRowData);
+    		this.otData.aaData.push(aRowData);
 
-    		$.openTable.sortData(this.options);
-    		$.openTable.filterData(this.options);
+    		$.openTable.sortData(this.otData);
+    		$.openTable.filterData(this.otData);
 
     		//get index after sorting
     		var iIndex = this.fnGetPositionByValue(aRowData[0], 0);
 
-    		$.openTable.jumpToPageWithRecord(this.options, iIndex);
-			$.openTable.updateTable(this.options);
+    		$.openTable.jumpToPageWithRecord(this.otData, iIndex);
+			$.openTable.updateTable(this.otData);
 
 			return { nTr: this.fnGetNodes(iIndex), iPos: iIndex };
     	},
 
     	_getRowID: function(oTR) {
     		//if we use filter it becomes a little harder, we need to get index value from afData first, then find matching data in aaData
-    		return (this.options.oPager.mSearch ? this.fnGetPositionByValue(this.options.afData[ oTR.index() + (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage ][0], 0)
-    			: oTR.index() + (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage);
+    		return (this.otData.oPager.mSearch ?
+    			this.fnGetPositionByValue(this.otData.afData[ oTR.index() + (this.otData.oPager.iCurrentPage - 1) * this.otData.oPager.iRecordsPerPage ][0], 0)
+    			: oTR.index() + (this.otData.oPager.iCurrentPage - 1) * this.otData.oPager.iRecordsPerPage);
     	}
 
     };
