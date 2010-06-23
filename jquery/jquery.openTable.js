@@ -27,23 +27,6 @@
  * TODO:
  * Add support for case-insensitive sorting - add .toUpperCase() in sorting function and new param to options
  *
- * return oTable.fnSettings().aoColumns[oTable.fnGetPosition(this)[2]].sName;
- * options.oTable.fnGetData(oTD.parentNode)[0]
- * oTable.fnUpdate(sValue, aPos[0], aPos[2], false);
- * return $(options.oTable.fnAddDataAndDisplay(aRowData).nTr);
- * var iPosition = options.oTable.fnGetPositionByValue(aRowData[0], 0);
- * return $(options.oTable.fnGetNodes(iPosition));
- *
- * fnSettings() +
- * fnGetPosition() +
- * fnGetData() +
- * fnUpdate() +
- * fnAddDataAndDisplay() +
- * fnGetPositionByValue() +
- * fnGetNodes() +
- *
- *
- *
  */
 
 (function($) {
