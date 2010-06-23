@@ -38,7 +38,7 @@
  * fnGetPosition() +
  * fnGetData() +
  * fnUpdate() +
- * fnAddDataAndDisplay()
+ * fnAddDataAndDisplay() +
  * fnGetPositionByValue() +
  * fnGetNodes() +
  *
