@@ -63,6 +63,9 @@
     	//mark this table as editable
     	this.data($.openTable.sSelfName, true);
 
+    	//add system class
+    	this.addClass('dataTables_wrapper');
+
     	//create surrounding divs and table itself
     	$.openTable.showTable.call(this, options);
 
