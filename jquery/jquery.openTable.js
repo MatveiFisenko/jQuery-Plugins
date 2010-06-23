@@ -447,57 +447,75 @@
     	},
 
     	//tr, int and nothing are supported
-    	fnGetData: function(oTR) {
-    		if (oTR.nodeName && oTR.nodeName.toUpperCase() === 'TR') {
-	    		return this.options.aaData[ this._getRowID($(oTR)) ];
+    	fnGetData: function(mObj) {
+    		if (mObj.nodeName && mObj.nodeName.toUpperCase() === 'TR') {
+	    		return this.options.aaData[ this._getRowID($(mObj)) ];
     		}
-    		else if (!isNaN(oTR)) {
-    			return this.options.aaData[ $oTR ];
+    		else if (!isNaN(mObj)) {
+    			return this.options.aaData[ mObj ];
     		}
     		else {
     			return this.options.aaData;
     		}
     	},
 
+    	/**
+    	 * Update data in table
+    	 * mData - string/array of strings
+    	 * mRow - row index/TR
+    	 * iColumn - column index/ignore
+    	 * bRedraw - true/false, default true
+    	 *
+    	 */
     	fnUpdate: function(mData, mRow, iColumn, bRedraw) {
     		var oTR;
-    		//if it is not int
+    		//if it is TR
     		if (isNaN(mRow)) {
     			oTR = $(mRow);
-
+    			//get row index
     			mRow = this.fnGetPosition(mRow);
     		}
     		else {
-    			//because nth-child starts from 1
-    			oTR = this.options.oTable.children('table').find('tr:nth-child(' + (mRow - (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage + 1) +')');
+    			oTR = $(this.fnGetNodes(mRow));
     		}
 
     		if ($.isArray(mData)) {
     			this.options.aaData[ mRow ] = mData;
 
-    			$.each(mData, function(i) {
-    				oTR.child('td:nth-child(' + (i + 1) +')').html(this);
-    			});
+    			if (bRedraw !== false) {
+	    			$.each(mData, function(i) {
+	    				oTR.child('td:nth-child(' + (i + 1) +')').html(this);
+	    			});
+    			}
 
     			return 0;
     		}
     		else if (!isNaN(iColumn)) {
     			this.options.aaData[ mRow ][ iColumn ] = mData;
-    			oTR.children('td:nth-child(' + ($.openTable._getColumnHiddenIndex(this.options.aoColumns, iColumn, true) + 1) +')').html(mData);
+
+    			if (bRedraw !== false) {
+    				oTR.children('td:nth-child(' + ($.openTable._getColumnHiddenIndex(this.options.aoColumns, iColumn, true) + 1) +')').html(mData);
+    			}
 
     			return 0;
     		}
 
+    		return 1;
     	},
 
-    	//only call using iID supported
+    	//index, nothing are supported
     	fnGetNodes: function(iID) {
     		if (!isNaN(iID)) {
-    			return this.options.oTable.children('table').children('tbody').children('tr:nth-child(' + (iID - (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage + 1) +')')[0];
+    			//because nth-child starts from 1
+    			return this.options.oTable.children('table').children('tbody')
+    				.children('tr:nth-child(' + (iID - (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage + 1) +')')[0];
+    		}
+    		else {
+    			return this.options.oTable.children('table').children('tbody').children('tr');
     		}
     	},
 
-    	//fast search for sInput in iColumn in table data. Return record index. Used in editable.
+    	//fast search for sInput in iColumn in table data. Return record index. Used in editable to get aaData index using unique record index
     	fnGetPositionByValue: function(sInput, iColumn) {
     		for (var i = 0, length = this.options.aaData.length; i < length; i++) {
     			if (this.options.aaData[i][iColumn] == sInput) {
@@ -507,6 +525,7 @@
     		return false;
     	},
 
+    	//add data and display it
     	fnAddDataAndDisplay: function(aRowData) {
     		this.options.aaData.push(aRowData);
 
