@@ -41,7 +41,8 @@
     	//merge options with default ones
     	options = $.extend({}, $.openTable.defaultOptions, options);
 
-    	options.oTable = this;
+    	//set id for table, used internally & in plugins
+    	options.sTableID = 't' + (this[0].id || (new Date()).getTime());
 
     	//mark this table as editable
     	this.data($.openTable.sSelfName, true);
@@ -302,11 +303,11 @@
 
     	updateTable: function(options) {
     		//update body
-        	options.oTable.children('table').children('tbody').html($.openTable.createTBody(options));
+        	$('#' + options.sTableID).children('tbody').html($.openTable.createTBody(options));
     		//update pager
-        	options.oTable.find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+        	$('#' + options.sTableID).parents('.dataTables_wrapper').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
         	//update info
-        	options.oTable.find('div.dataTables_info').html($.openTable.createInfo(options));
+        	$('#' + options.sTableID).parents('.dataTables_wrapper').find('div.dataTables_info').html($.openTable.createInfo(options));
     	},
 
     	showTable: function(options) {
@@ -409,7 +410,7 @@
         		}
         	});
 
-        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '" id="t' +  options.oTable[0].id + '"><thead><tr>' + sHeader + '</tr></thead><tbody>'
+        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '" id="' +  options.sTableID + '"><thead><tr>' + sHeader + '</tr></thead><tbody>'
         		+ $.openTable.createTBody(options) + '</tbody></table>';
     	},
 
@@ -500,11 +501,11 @@
     	fnGetNodes: function(iID) {
     		if (!isNaN(iID)) {
     			//because nth-child starts from 1
-    			return this.options.oTable.children('table').children('tbody')
+    			return this.children('tbody')
     				.children('tr:nth-child(' + (iID - (this.options.oPager.iCurrentPage - 1) * this.options.oPager.iRecordsPerPage + 1) +')')[0];
     		}
     		else {
-    			return this.options.oTable.children('table').children('tbody').children('tr');
+    			return this.children('tbody').children('tr');
     		}
     	},
 
