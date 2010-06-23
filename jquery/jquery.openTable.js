@@ -290,7 +290,7 @@
 
     	//jump to page where we  have record with iIndex index
     	jumpToPageWithRecord: function(options, iIndex) {
-    		options.oPager.iCurrentPage = Math.floor(iIndex / options.oPager.iRecordsPerPage) || 1;
+    		options.oPager.iCurrentPage = Math.ceil(iIndex / options.oPager.iRecordsPerPage);
     	},
 
     	//create info module
