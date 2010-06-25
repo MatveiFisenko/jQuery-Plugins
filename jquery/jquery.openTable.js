@@ -53,13 +53,27 @@
     	//create surrounding divs and table itself
     	$.openTable.showTable.call(this, options);
 
+    	//create openTable object, we use it in event handlers
+    	var oTable = $.extend(this.children('table'), {
+    		otData: options,
+
+    		fnSettings: $.openTable.fnSettings,
+    		fnGetPosition: $.openTable.fnGetPosition,
+    		fnGetData: $.openTable.fnGetData,
+    		fnUpdate: $.openTable.fnUpdate,
+    		fnGetNodes: $.openTable.fnGetNodes,
+    		fnGetPositionByValue: $.openTable.fnGetPositionByValue,
+    		fnAddDataAndDisplay: $.openTable.fnAddDataAndDisplay,
+    		_getRowID: $.openTable._getRowID
+    	});
+
     	//bind events
     	//filter
     	this.find('div.dataTables_filter input').keyup(function() {
 			//filter data
 			$.openTable.filterData(options, this.value);
 
-			$.openTable.updateTable(options);
+			$.openTable.updateTable(oTable);
 
     		return false;
     	});
@@ -72,7 +86,7 @@
     		//recalculate total pages
     		options.oPager.iTotalPages = Math.ceil(options.oPager.iTotalRecords / options.oPager.iRecordsPerPage);
 
-    		$.openTable.updateTable(options);
+    		$.openTable.updateTable(oTable);
 
         	return false;
     	});
@@ -86,7 +100,7 @@
     		//select page, if we clicked on already active page - do nothing
     		if (!$.openTable.selectPage(options, oSpan)) return false;
 
-    		$.openTable.updateTable(options);
+    		$.openTable.updateTable(oTable);
 
     		return false;
     	});
@@ -102,7 +116,7 @@
     		//filter data
     		$.openTable.filterData(options, false);
 
-    		$.openTable.updateTable(options);
+    		$.openTable.updateTable(oTable);
 
     		//set active column
     		oTh.attr('class', options.aaSorting[0][1] === 'asc' ? 'sorting_asc' : 'sorting_desc')
@@ -112,18 +126,7 @@
     	});
 
     	//return openTable object
-    	return $.extend(this.children('table'), {
-    		otData: options,
-
-    		fnSettings: $.openTable.fnSettings,
-    		fnGetPosition: $.openTable.fnGetPosition,
-    		fnGetData: $.openTable.fnGetData,
-    		fnUpdate: $.openTable.fnUpdate,
-    		fnGetNodes: $.openTable.fnGetNodes,
-    		fnGetPositionByValue: $.openTable.fnGetPositionByValue,
-    		fnAddDataAndDisplay: $.openTable.fnAddDataAndDisplay,
-    		_getRowID: $.openTable._getRowID
-    	});
+    	return oTable;
     };
 
     $.openTable = {
@@ -302,13 +305,13 @@
     			.replace('_TOTAL_', options.oPager.iTotalRecords) + (options.oPager.mSearch ? ' ' + options.oLanguage.sInfoFiltered.replace('_MAX_', options.aaData.length) : '');
     	},
 
-    	updateTable: function(options) {
+    	updateTable: function(oTable) {
     		//update body
-        	$('#' + options.sTableID).children('tbody').html($.openTable.createTBody(options));
+        	oTable.children('tbody').html($.openTable.createTBody(oTable.otData));
     		//update pager
-        	$('#' + options.sTableID).parents('.dataTables_wrapper').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(options));
+        	oTable.parents('.dataTables_wrapper').find('div.dataTables_paginate > span:nth-child(3)').html($.openTable.createPager(oTable.otData));
         	//update info
-        	$('#' + options.sTableID).parents('.dataTables_wrapper').find('div.dataTables_info').html($.openTable.createInfo(options));
+        	oTable.parents('.dataTables_wrapper').find('div.dataTables_info').html($.openTable.createInfo(oTable.otData));
     	},
 
     	showTable: function(options) {
@@ -531,7 +534,7 @@
     		var iIndex = this.fnGetPositionByValue(aRowData[0], 0);
 
     		$.openTable.jumpToPageWithRecord(this.otData, iIndex);
-			$.openTable.updateTable(this.otData);
+			$.openTable.updateTable(this);
 
 			return { nTr: this.fnGetNodes(iIndex), iPos: iIndex };
     	},
