@@ -2,6 +2,8 @@
  * Table - tables plugin for jQuery.
  *
  * Implements some of the DataTables features and is small and fast.
+ * Uses DataTables css.
+ *
  * Sorting & filtering is supported.
  * IMPORTANT: if you need to filter data and then use fnGetPosition/fnGetData methods in your app/plugin
  * openTables expects to see unique record ID in the first column.
