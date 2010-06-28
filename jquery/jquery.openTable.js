@@ -1,6 +1,38 @@
 /*
  * Table - tables plugin for jQuery.
  *
+ * Implements some of the DataTables features and is small and fast.
+ * Sorting & filtering is supported.
+ * IMPORTANT: if you need to filter data and then use fnGetPosition/fnGetData methods in your app/plugin
+ * openTables expects to see unique record ID in the first column.
+ *
+ * Currently done:
+ * 1. Data loading - only from javascript array.
+ *
+ * 2. Config options:
+ * aaSorting - sorting only by one column
+ * sDom - fully implemented.
+ * bStateSave - only false.
+ * sPaginationType - only full numbers.
+ * oLanguage - fully implemented.
+ * bProcessing - only false.
+ * bJQueryUI - only false.
+ * bAutoWidth - only false.
+ *
+ * 3. Public functions (methods).
+ * fnSettings - only aoColumns returned.
+ * fnGetPosition - fully implemented.
+ * fnGetData - fully implemented.
+ * fnUpdate - fully implemented.
+ * fnGetNodes - fully implemented.
+ *
+ * 4. Special methods.
+ * fnGetPositionByValue - get position of element by unique data. Used to get position using unique key.
+ * fnAddDataAndDisplay - add data and display it.
+ *
+ * 5. Misc
+ * Sorting as case-insensitive same as default sorting method in DataTables.
+ *
  * Copyright (c) 2010 mot <2matvei@gmail.com>
  *
  * Licensed under the GPLv3 license:
@@ -19,7 +51,8 @@
   * '*' - mandatory
   * @name  table
   * @type  jQuery
-  * @param Hash			options					Additional options.
+  * @param Hash			options					Additional options. Same as in DataTables, but not all supported, see docs.
+  * @param String		options[className]		Table className.
   *
   */
 
