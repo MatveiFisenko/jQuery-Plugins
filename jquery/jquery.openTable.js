@@ -208,7 +208,8 @@
     	 */
     	_getColumnHiddenIndex: function(aoColumns, iColumn, bSw) {
     		$.each(aoColumns, function(i, element) {
-    			if (i < iColumn) {
+    			//when we try to find index for the first column in table - it's index is zero.
+    			if (i <= iColumn) {
     				//if column is before selected and not visible - increment our iColumn
     				if (!element.bVisible) {
     					bSw ? iColumn-- : iColumn++;
