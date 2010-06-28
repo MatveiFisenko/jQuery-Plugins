@@ -25,6 +25,7 @@
 
 /*
  * TODO:
+ * May be refactor internal function to use only oTable object, not oTable and options object together.
  *
  */
 
