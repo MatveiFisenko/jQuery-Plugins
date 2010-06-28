@@ -207,10 +207,10 @@
     	 * with bSw == true get column index in displayed table using column index in aoColumns
     	 */
     	_getColumnHiddenIndex: function(aoColumns, iColumn, bSw) {
-    		$.each(aoColumns, function(i) {
+    		$.each(aoColumns, function(i, element) {
     			if (i < iColumn) {
     				//if column is before selected and not visible - increment our iColumn
-    				if (!this.bVisible) {
+    				if (!element.bVisible) {
     					bSw ? iColumn-- : iColumn++;
     				}
         		}
@@ -258,7 +258,7 @@
 	    		sBody += '<tr class="' + (i % 2 ? 'even' : 'odd') + '">';
 
 	    		//iterate throw array of data for <tr>
-	    		$.each(this, function(i, element) {
+	    		$.each(element, function(i, element) {
 	    			//check if column is visible
 	    			if (options.aoColumns[i].bVisible) {
 	        			sBody += '<td>' + element + '</td>';
@@ -437,15 +437,15 @@
     		//create table header
         	var sHeader = '';
 
-        	$.each(options.aoColumns, function(i) {
+        	$.each(options.aoColumns, function(i, element) {
         		//normalize aoColumns
-        		if (typeof(this.bVisible) === 'undefined') {
+        		if (typeof(element.bVisible) === 'undefined') {
         			this.bVisible = true;
         		}
-        		if (this.bVisible) {
+        		if (element.bVisible) {
         			//create sorting class
         			sHeader += '<th class="' + (i == options.aaSorting[0][0] ? (options.aaSorting[0][1] !== 'desc' ? 'sorting_asc' : 'sorting_desc') : 'sorting')
-        					+ '" width="' + this.sWidth + '">' + this.sTitle + '</th>';
+        					+ '" width="' + element.sWidth + '">' + element.sTitle + '</th>';
         		}
         	});
 
