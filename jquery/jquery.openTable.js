@@ -512,7 +512,7 @@
     			if (bRedraw !== false) {
 	    			$.each(mData, function(i, element) {
 	    				//check if column is visible
-		    			if (oTable.options.aoColumns[i].bVisible) {
+		    			if (oTable.otData.aoColumns[i].bVisible) {
 		    				oTR.children('td:nth-child(' + (i + iHiddenCount + 1) +')').html(element);
 		        		}
 		    			else {
