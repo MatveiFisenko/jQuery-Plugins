@@ -25,7 +25,6 @@
 
 /*
  * TODO:
- * Add support for case-insensitive sorting - add .toUpperCase() in sorting function and new param to options
  *
  */
 
@@ -153,7 +152,7 @@
     		}
     		//sort array of data
     		options.aaData.sort(function(a, b) {
-    			if (a[iColumn] > b[iColumn]) {
+    			if (a[iColumn].toLowerCase() > b[iColumn].toLowerCase()) {
     				return 1;
     			}
     			else {
