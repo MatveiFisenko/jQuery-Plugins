@@ -233,7 +233,7 @@
 	    		sSearch = new RegExp(options.oPager.mSearch.toUpperCase(), 'i');
 	    		options.afData = options.aaData.filter(function(element) {
 	    			for (var i = 0, iLength = element.length; i < iLength; i++) {
-	    				if (element[i].search(sSearch) > -1) {
+	    				if (element[i] !== null && element[i].search(sSearch) > -1) {
 	        				return true;
 	        			}
 	    			}
@@ -262,7 +262,8 @@
 	    		$.each(element, function(i, element) {
 	    			//check if column is visible
 	    			if (options.aoColumns[i].bVisible) {
-	        			sBody += '<td>' + element + '</td>';
+	    				//because element can be null and it converts to 'null'
+	        			sBody += '<td>' + (element !== null ? element : '') + '</td>';
 	        		}
 	    		});
 
@@ -540,6 +541,15 @@
     	//index, nothing are supported
     	fnGetNodes: function(iID) {
     		if (!isNaN(iID)) {
+    			if (this.otData.oPager.mSearch) {
+    				//find matching row in filter data, because iID is row in aaData!
+    				for (var i = 0, length = this.otData.afData.length; i < length; i++) {
+    	    			if (this.otData.afData[i][0] == this.otData.aaData[iID][0]) {
+    	    				iID = i;
+    	    				break;
+    	    			}
+    	    		}
+    			}
     			//because nth-child starts from 1
     			return this.children('tbody')
     				.children('tr:nth-child(' + (iID - (this.otData.oPager.iCurrentPage - 1) * this.otData.oPager.iRecordsPerPage + 1) +')')[0];
