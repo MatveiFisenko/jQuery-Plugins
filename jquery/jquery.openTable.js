@@ -60,6 +60,8 @@
 
 /*
  * TODO:
+ * fnUpdate use fnGetNodes internally. In dteditable we call fnGetNodes after fnUpdate. To optimize speed we can change returning value in
+ * fnUpdate and do not use fnGetNodes after it.
  * May be refactor internal function to use only oTable object, not oTable and options object together.
  *
  */
@@ -543,6 +545,7 @@
     		if (!isNaN(iID)) {
     			if (this.otData.oPager.mSearch) {
     				//find matching row in filter data, because iID is row in aaData!
+    				var sTime = (new Date()).getTime();
     				for (var i = 0, length = this.otData.afData.length; i < length; i++) {
     	    			if (this.otData.afData[i][0] == this.otData.aaData[iID][0]) {
     	    				iID = i;
