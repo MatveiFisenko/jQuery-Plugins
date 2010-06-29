@@ -278,7 +278,7 @@
 	    	});
 
 	    	//if nothing to show
-	    	if (!sBody) sBody = '<tr class="odd"><td valign="top" colspan="' + options.aaData[0].length + '" class="dataTables_empty">' + options.oLanguage.sZeroRecords + '</td></tr>';
+	    	if (!sBody) sBody = '<tr class="odd"><td valign="top" colspan="' + options.aoColumns.length + '" class="dataTables_empty">' + options.oLanguage.sZeroRecords + '</td></tr>';
 
 	    	return sBody;
     	},
