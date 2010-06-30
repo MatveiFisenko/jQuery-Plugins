@@ -258,6 +258,25 @@
     		options.oPager.iTotalPages = Math.ceil(options.oPager.iTotalRecords / options.oPager.iRecordsPerPage);
     	},
 
+    	createHeader: function(options) {
+    		//create table header
+        	var sHeader = '<tr>';
+
+        	$.each(options.aoColumns, function(i, element) {
+        		//normalize aoColumns
+        		if (typeof(element.bVisible) === 'undefined') {
+        			this.bVisible = true;
+        		}
+        		if (element.bVisible) {
+        			//create sorting class
+        			sHeader += '<th class="' + (i == options.aaSorting[0][0] ? (options.aaSorting[0][1] !== 'desc' ? 'sorting_asc' : 'sorting_desc') : 'sorting')
+        					+ '" width="' + element.sWidth + '">' + element.sTitle + '</th>';
+        		}
+        	});
+
+        	return sHeader + '</tr>';
+    	},
+
     	createTBody: function(options) {
 	    	//create table data
 	    	var sBody = '';
@@ -358,6 +377,18 @@
         	oTable.parents('.dataTables_wrapper').find('div.dataTables_info').html($.openTable.createInfo(oTable.otData));
     	},
 
+    	setTableData: function(oTable, aData, aDataColumns) {
+    		oTable.otData.aaData = aData;
+    		oTable.otData.aoColumns = aDataColumns;
+
+    		$.openTable.sortData(oTable.otData);
+    		$.openTable.filterData(oTable.otData);
+
+    		oTable.children('thead').html($.openTable.createHeader(oTable.otData));
+
+    		$.openTable.updateTable(oTable);
+    	},
+
     	showTable: function(options) {
     		//sort & filter data
         	$.openTable.sortData(options);
@@ -443,22 +474,8 @@
     	},
 
     	_fnFeatureHtmlTable: function(options) {
-    		//create table header
-        	var sHeader = '';
-
-        	$.each(options.aoColumns, function(i, element) {
-        		//normalize aoColumns
-        		if (typeof(element.bVisible) === 'undefined') {
-        			this.bVisible = true;
-        		}
-        		if (element.bVisible) {
-        			//create sorting class
-        			sHeader += '<th class="' + (i == options.aaSorting[0][0] ? (options.aaSorting[0][1] !== 'desc' ? 'sorting_asc' : 'sorting_desc') : 'sorting')
-        					+ '" width="' + element.sWidth + '">' + element.sTitle + '</th>';
-        		}
-        	});
-
-        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '" id="' +  options.sTableID + '"><thead><tr>' + sHeader + '</tr></thead><tbody>'
+        	return '<table cellpadding="0" cellspacing="0" border="0" class="' +  options.className + '" id="' +  options.sTableID + '"><thead>'
+        		+ $.openTable.createHeader(options) + '</thead><tbody>'
         		+ $.openTable.createTBody(options) + '</tbody></table>';
     	},
 
