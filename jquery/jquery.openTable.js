@@ -148,7 +148,7 @@
     	});
 
     	//sorter
-    	this.children('table').find('thead > tr').click(function(e) {
+    	this.children('table').children('thead').click(function(e) {
     		var oTh = $(e.target);
     		//if we clicked on not-th element
     		if (!oTh.is('th')) return;
