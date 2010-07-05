@@ -75,14 +75,12 @@
 (function($) {
 
     $.fn.openTable = function(options) {
-    	//if options are unset - make empty object
-    	options = options || {};
-
     	//if we made it editable already - return
     	if (this.data($.openTable.sSelfName)) return this;
 
     	//merge options with default ones
-    	options = $.extend({}, $.openTable.defaultOptions, options);
+    	//if options are unset - make empty object, default options used not as separate object because we need to copy, not link them
+    	options = $.extend({}, { className: 'display', oPager: { iRecordsPerPage: 10 }, oFeatures: { bFilter: true, bInfo: true, bLengthChange: true, bPaginate: true } }, options || {});
 
     	//set id for table, used internally & in plugins
     	options.sTableID = 't' + (this[0].id || (new Date()).getTime());
@@ -194,20 +192,23 @@
     				options.aaSorting[0][1] = (options.aaSorting[0][1] === 'asc' ? 'desc' : 'asc');
     			}
     		}
-    		//sort array of data
-    		//assign global var to reach it from sorting function
-    		openTableiColumn = iColumn;
-    		if (options.aaData[0][iColumn] && options.aaData[0][iColumn].match(/^\d{2}.\d{2}.\d{4}/)) {
-    			//sort date columns in special way
-    			options.aaData.sort($.openTable._sortDate);
+
+    		//sort array of data only if it is not empty
+    		if (options.aaData.length) {
+	    		//assign global var to reach it from sorting function
+	    		openTableiColumn = iColumn;
+	    		if (options.aaData[0][iColumn] && options.aaData[0][iColumn].match(/^\d{2}.\d{2}.\d{4}/)) {
+	    			//sort date columns in special way
+	    			options.aaData.sort($.openTable._sortDate);
+	    		}
+	    		else {
+		    		options.aaData.sort($.openTable._sortDefault);
+	    		}
+		    	//reverse if order is desc
+		    	if (options.aaSorting[0][1] === 'desc') {
+		    		options.aaData.reverse();
+		    	}
     		}
-    		else {
-	    		options.aaData.sort($.openTable._sortDefault);
-    		}
-	    	//reverse if order is desc
-	    	if (options.aaSorting[0][1] === 'desc') {
-	    		options.aaData.reverse();
-	    	}
     	},
 
     	/**
@@ -649,8 +650,5 @@
 		}
 
     };
-
-	//default options used
-    $.openTable.defaultOptions = { className: 'display', oPager: { iRecordsPerPage: 10 }, oFeatures: { bFilter: true, bInfo: true, bLengthChange: true, bPaginate: true } };
 
 })(jQuery);
