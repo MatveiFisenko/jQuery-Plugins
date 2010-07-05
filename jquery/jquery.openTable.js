@@ -17,7 +17,7 @@
  * 1. Data loading - only from javascript array.
  *
  * 2. Config options:
- * aaSorting - sorting only by one column
+ * aaSorting - sorting only by one column, column number starts from zero and include hidden columns
  * sDom - fully implemented.
  * bStateSave - only false.
  * sPaginationType - only full numbers.
@@ -38,7 +38,8 @@
  * fnAddDataAndDisplay - add data and display it.
  *
  * 5. Misc
- * Sorting as case-insensitive same as default sorting method in DataTables.
+ * Sorting is case-insensitive same as default sorting method in DataTables.
+ * Sorting auto detects date strings (dd.mm.yyyy format) and sorts them correctly.
  *
  * Copyright (c) 2010 mot <2matvei@gmail.com>
  *
@@ -194,14 +195,15 @@
     			}
     		}
     		//sort array of data
-    		options.aaData.sort(function(a, b) {
-    			if (a[iColumn].toLowerCase() > b[iColumn].toLowerCase()) {
-    				return 1;
-    			}
-    			else {
-    				return -1;
-    			}
-	    	});
+    		//assign global var to reach it from sorting function
+    		openTableiColumn = iColumn;
+    		if (options.aaData[0][iColumn] && options.aaData[0][iColumn].match(/^\d{2}.\d{2}.\d{4}/)) {
+    			//sort date columns in special way
+    			options.aaData.sort($.openTable._sortDate);
+    		}
+    		else {
+	    		options.aaData.sort($.openTable._sortDefault);
+    		}
 	    	//reverse if order is desc
 	    	if (options.aaSorting[0][1] === 'desc') {
 	    		options.aaData.reverse();
@@ -615,7 +617,36 @@
     		return (this.otData.oPager.mSearch ?
     			this.fnGetPositionByValue(this.otData.afData[ oTR.index() + (this.otData.oPager.iCurrentPage - 1) * this.otData.oPager.iRecordsPerPage ][0], 0)
     			: oTR.index() + (this.otData.oPager.iCurrentPage - 1) * this.otData.oPager.iRecordsPerPage);
-    	}
+    	},
+
+    	//sort functions
+    	//default sorting - string compare
+    	_sortDefault: function(a, b) {
+			if (a[openTableiColumn].toLowerCase() > b[openTableiColumn].toLowerCase()) {
+				return 1;
+			}
+			else {
+				return -1;
+			}
+    	},
+    	//sorting dates in dd.mm.yyyy format
+    	_sortDate: function(a, b) {
+			//add support for having non-date array members
+			if (!a[openTableiColumn] || a[openTableiColumn].length < 10) {
+				return -1;
+			}
+			if (!b[openTableiColumn] || b[openTableiColumn].length < 10) {
+				return 1;
+			}
+			//parse them to int and then check which is larger
+			if (+(a[openTableiColumn].substr(6, 4) + a[openTableiColumn].substr(4, 2) + a[openTableiColumn].substr(0, 2)) >
+				+(b[openTableiColumn].substr(6, 4) + b[openTableiColumn].substr(4, 2) + b[openTableiColumn].substr(0, 2))) {
+				return 1;
+			}
+			else {
+				return -1;
+			}
+		}
 
     };
 
