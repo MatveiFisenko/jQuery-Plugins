@@ -182,7 +182,7 @@
     		}
     		else {
     			//we need to check if we have hidden columns
-    			$.openTable._getColumnHiddenIndex(options.aoColumns, iColumn);
+    			iColumn = $.openTable._getColumnHiddenIndex(options.aoColumns, iColumn);
 
     			//save current active column
     			if (options.aaSorting[0][0] !== iColumn) {
