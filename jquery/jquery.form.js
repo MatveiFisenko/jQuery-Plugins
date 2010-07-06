@@ -43,7 +43,8 @@
 		this.submit(function(e) {
 			//run pre-submit handler
 			if (options.fBeforeHandler) {
-				options.fBeforeHandler(this);
+				//if fBeforeHandler returns false - do not submit form
+				if (options.fBeforeHandler(this) === false) return false;
 			}
 
 			$.form.toggleButtons.call(this);
