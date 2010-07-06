@@ -194,21 +194,21 @@
     		}
 
     		//sort array of data only if it is not empty
-    		if (options.aaData.length) {
-	    		//assign global var to reach it from sorting function
-	    		openTableiColumn = iColumn;
-	    		if (options.aaData[0][iColumn] && options.aaData[0][iColumn].match(/^\d{2}.\d{2}.\d{4}/)) {
-	    			//sort date columns in special way
-	    			options.aaData.sort($.openTable._sortDate);
-	    		}
-	    		else {
-		    		options.aaData.sort($.openTable._sortDefault);
-	    		}
-		    	//reverse if order is desc
-		    	if (options.aaSorting[0][1] === 'desc') {
-		    		options.aaData.reverse();
-		    	}
+    		if (!options.aaData.length) return;
+
+    		//assign global var to reach it from sorting function
+    		openTableiColumn = iColumn;
+    		if (options.aaData[0][iColumn] && options.aaData[0][iColumn].match(/^\d{2}.\d{2}.\d{4}/)) {
+    			//sort date columns in special way
+    			options.aaData.sort($.openTable._sortDate);
     		}
+    		else {
+	    		options.aaData.sort($.openTable._sortDefault);
+    		}
+	    	//reverse if order is desc
+	    	if (options.aaSorting[0][1] === 'desc') {
+	    		options.aaData.reverse();
+	    	}
     	},
 
     	/**
