@@ -62,7 +62,9 @@
 				//not change if we (possible) have lower level tabs, which need original location.hash.
 				//CAUTION - we need to change location.hash for history plugin support, if we have no lower level tabs BUT location.hash is like this #/level1/level2
 				//it was implemented here in previous revs, see svn history, but is removed because not used
-				location.hash = sPath;
+				//and change hash only if we have more than one menu element - actually it make no sense to change it with one menu element, but really by this
+				//we add support for reloading asked page after login, without this we wiil always point to #/enter/
+				if (oA.parent().siblings().length) location.hash = sPath;
 			}
 
 			//store current path, used for history support
