@@ -122,7 +122,7 @@
 
 				//if we have custom run handler
 				if ($(this).data('form.aOptions').fAfterHandler) {
-					$(this).data('form.aOptions').fAfterHandler(oJSReq);
+					if ($(this).data('form.aOptions').fAfterHandler(oJSReq, this) === false) return false;
 				}
 
 				if (oJSReq.responseJS.reload) {
