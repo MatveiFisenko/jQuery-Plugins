@@ -234,12 +234,24 @@
     	},
 
     	showOverlay: function(options, oTD) {
+    		var sOverlayID, oParentOverlay = options.oTable.parents('div.simple_overlay').last();
+
+    		if (oParentOverlay.length) {//if we are inside overlay
+    			sOverlayID = +oParentOverlay[0].id.charAt(7);//get it's level
+    		}
+    		else {//if not
+    			sOverlayID = 0;
+    			oParentOverlay = 'body';
+    		}
+
+    		sOverlayID = 'overlay' + (sOverlayID + 1) + (options.overlayClass == 'sub_overlay' ? '_2' : '_1');//advance to next level and set type
+
     		if (!options.oOverlay) {
-    			if ($('#' + options.overlayClass).length) {//if we have overlay already (made by other editable()) - use it
-    				options.oOverlay = $('#' + options.overlayClass).overlay2({ top: options.overlayClass == 'sub_overlay' ? '15%' : '10%' });
+    			if ($('#' + sOverlayID).length) {//if we have overlay already (made by other editable()) - use it
+    				options.oOverlay = $('#' + sOverlayID).overlay2({ top: options.overlayClass == 'sub_overlay' ? '15%' : '10%' });
     			}
     			else {
-	    			options.oOverlay = $('<div class="' + options.overlayClass + '" id="' + options.overlayClass + '"></div>').appendTo('body')
+	    			options.oOverlay = $('<div class="' + options.overlayClass + '" id="' + sOverlayID + '"></div>').appendTo(oParentOverlay)
 	    			.overlay2({ top: options.overlayClass == 'sub_overlay' ? '15%' : '10%' });
     			}
     		}
@@ -269,7 +281,7 @@
     				$.editable.sParentTableID = sParentTableID[1];
     			}
 
-    			$('#' + options.overlayClass).html('<a class="close"></a>' + oJS.responseJS.sPageContents);
+    			options.oOverlay.overlay.html('<a class="close"></a>' + oJS.responseJS.sPageContents);
     			options.oOverlay.load();
     		});
     	},
