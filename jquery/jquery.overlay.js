@@ -83,8 +83,8 @@
     		for (var i = 0, length = $.overlay2.overlays.length, et = $(e.target), overlay; i < length; i++) {
     			overlay = $.overlay2.overlays[i];
 
-    			//do not close if we clicked inside overlay OR overlay itself OR we clicked inside .sub_overlay
-    			if (overlay.has(et).length || et[0] == overlay[0] || et.parents('div.sub_overlay').length) continue;
+    			//do not close if we clicked (inside overlay BUT NOT a.close) OR overlay itself OR we clicked inside .sub_overlay
+    			if ((overlay.has(et).length && et.not('a.close').length) || et[0] == overlay[0] || et.parents('div.sub_overlay').length) continue;
 
     			$.overlay2.close(overlay, i);
 

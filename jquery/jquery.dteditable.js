@@ -269,7 +269,7 @@
     				$.editable.sParentTableID = sParentTableID[1];
     			}
 
-    			$('#' + options.overlayClass).html(oJS.responseJS.sPageContents);
+    			$('#' + options.overlayClass).html('<a class="close"></a>' + oJS.responseJS.sPageContents);
     			options.oOverlay.load();
     		});
     	},
