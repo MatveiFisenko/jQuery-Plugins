@@ -39,7 +39,8 @@
 
     $.overlay2 = {
     	load: function() {
-			var top, left, w = $(window),
+			var top, left,
+			w = this.overlay.parents('div.simple_overlay, div.sub_overlay').first(), w = w.length ? w : $(window),
 			//get overlay dimensions
 			oWidth = this.overlay.outerWidth({ margin:true }), oHeight = this.overlay.outerHeight({ margin:true });
 
