@@ -38,8 +38,6 @@
     };
 
     $.overlay2 = {
-    	overlays: [],
-
     	load: function() {
 			var top, left, w = $(window),
 			//get overlay dimensions
@@ -62,38 +60,27 @@
 			if (!$(document).data('overlay2')) {
 				$(document).bind('click.overlay', $.overlay2.checkOverlays).data('overlay2', true);
 			}
-
-			//can be miss because click events may be stopped somewhere
-			if ($.inArray(this.overlay, $.overlay2.overlays) < 0) {
-				$.overlay2.overlays.push(this.overlay);
-			}
 		},
 
-		close: function(overlay, i) {
-			//can be called as object method
-			if (!arguments.length) {
-				overlay = this.overlay;
-				i = $.inArray(this.overlay, $.overlay2.overlays);
-			}
-			overlay.hide();
-			$.overlay2.overlays.splice(i, 1);//remove this overlay
+		close: function() {
+			this.overlay.hide();
 		},
 
+		//called on click event
     	checkOverlays: function(e) {
-    		for (var i = 0, length = $.overlay2.overlays.length, et = $(e.target), overlay; i < length; i++) {
-    			overlay = $.overlay2.overlays[i];
+			var et = $(e.target),
+			oParent = et.closest('div.simple_overlay, div.sub_overlay');
 
-    			//do not close if we clicked (inside overlay BUT NOT a.close) OR overlay itself OR we clicked inside .sub_overlay
-    			if ((overlay.has(et).length && et.not('a.close').length) || et[0] == overlay[0] || et.parents('div.sub_overlay').length) continue;
+			if (!oParent.length) {//all close
+				$('div.simple_overlay, div.sub_overlay').hide();
+			}
+			else {//close only children overlays
+				oParent.find('div.simple_overlay, div.sub_overlay').hide();
 
-    			$.overlay2.close(overlay, i);
-
-    			//reduce pointer and iterator (because we removed one element from array) and check if it points to the last element, if so - return
-    			if (length-- == i--) return;
-    		}
-
-    		//unbind event if no overlays left
-    		if (!$.overlay2.overlays.length) $(document).unbind("click.overlay").data('overlay2', false);
+				if (et.is('a.close')) {//if we clicked on close link
+					oParent.hide();
+				}
+			}
     	}
 
     };
