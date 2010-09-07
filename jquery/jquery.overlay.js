@@ -19,6 +19,7 @@
   * @name  Overlay
   * @type  jQuery
   * @param Hash			options					Additional options.
+  * @param string		options[className]		Overlay className, mandatory. Used for history tab. *
   * @param string		options[top]			Vertical position. Default '10%' from top.
   * @param string		options[left]			Horizontal position. Default 'center'.
   *
