@@ -25,6 +25,7 @@
   * @param Function		options[callback]		Function to run after submitting edited content.
   * @param Hash			options[submitdata]		Extra parameters to send when submitting edited content. Can be function returning hash.
   * @param String		options[editModule]		Module name where to send edited content. Default is target.
+  * @param String		options[showModule]		Module name where to send show requests. Default is target.
   * @param Hash			options[submitdata_add]	Extra parameters to send when adding new row. Can be function returning hash. Property _sTableID is reserved for internal use.
   * @param mixed		options[toolbar]		Create toolbar. Default true. 'modal' - modal add event, false - don't create.
   * @param Hash			options[selectColumns]	Values for creating <select> edits. Format: { columnName: {0: 'edit1', 1:'edit2' } }
@@ -55,6 +56,9 @@
 
     	//set editModule
     	options.editModule = options.editModule || target;
+
+    	//set showModule
+    	options.showModule = options.showModule || target;
 
     	//if we pass DataTables object directly
     	if (this.fnUpdate) options.oTable = this;
@@ -234,33 +238,14 @@
     	},
 
     	showOverlay: function(options, oTD) {
-    		var sOverlayID, oParentOverlay = options.oTable.parents('div.simple_overlay').last();
-
-    		if (oParentOverlay.length) {//if we are inside overlay
-    			sOverlayID = +oParentOverlay[0].id.charAt(7);//get it's level
-    		}
-    		else {//if not
-    			sOverlayID = 0;
-    			oParentOverlay = 'body';
-    		}
-
-    		sOverlayID = 'overlay' + (sOverlayID + 1) + (options.overlayClass == 'sub_overlay' ? '_2' : '_1');//advance to next level and set type
-
-    		if (!options.oOverlay) {
-    			if ($('#' + sOverlayID).length) {//if we have overlay already (made by other editable()) - use it
-    				options.oOverlay = $('#' + sOverlayID).overlay2({ top: options.overlayClass == 'sub_overlay' ? '15%' : '10%' });
-    			}
-    			else {
-	    			options.oOverlay = $('<div class="' + options.overlayClass + '" id="' + sOverlayID + '"></div>').appendTo(oParentOverlay)
-	    			.overlay2({ top: options.overlayClass == 'sub_overlay' ? '15%' : '10%' });
-    			}
-    		}
+    		//now we have one 1 main overlay and 1 modal overlay. main overlay is with history support
+    		options.oOverlay = $.overlay2.create({ className: oTD.nodeName ? 'simple_overlay' : 'sub_overlay', top: oTD.nodeName ? '10%' : '15%' });
 
     		var sPath;
     		//open normal 'show' overlay
     		if (oTD.nodeName) {
     			//send table ID as param. Used if we edit main object in show dialog
-    			sPath = options.sModuleURL + options.showUrl + '/' + options.oTable.fnGetData(oTD.parentNode)[0] + '?' + $.param({ _sParentTableID: options.oTable[0].id });
+    			sPath = options.showModule + options.showUrl + '/' + options.oTable.fnGetData(oTD.parentNode)[0] + '?' + $.param({ _sParentTableID: options.oTable[0].id });
     		}
     		//open modal dialog
     		else {
@@ -281,7 +266,7 @@
     				$.editable.sParentTableID = sParentTableID[1];
     			}
 
-    			options.oOverlay.overlay.html('<a class="close"></a>' + oJS.responseJS.sPageContents);
+    			options.oOverlay.html(oJS.responseJS.sPageContents, oJS._openArgs.url);
     			options.oOverlay.load();
     		});
     	},
