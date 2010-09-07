@@ -40,10 +40,22 @@
 
     	sHeader: '<a class="close"></a>',
 
+    	//new way of creating overlays, supporting only 1 main overlay with history tabs and 1 modal overlay
+    	create: function(options) {
+    		options = $.extend({}, $.overlay2.defaultOptions, options);
+
+			var oOverlay = $('div.' + options.className);
+
+			if (!oOverlay.data('overlay2')) {//if no overlay - create it
+				oOverlay = $('<div class="' + options.className + '"></div>').appendTo('body').data('overlay2', true);
+			}
+
+    		return { overlay: oOverlay, options: options, load: $.overlay2.load, html: $.overlay2.html, close: $.overlay2.close };
+    	},
+
 
     	load: function() {
-			var top, left,
-			w = this.overlay.parents('div.simple_overlay, div.sub_overlay').first(), w = w.length ? w : $(window),
+			var top, left, w = $(window),
 			//get overlay dimensions
 			oWidth = this.overlay.outerWidth({ margin:true }), oHeight = this.overlay.outerHeight({ margin:true });
 
@@ -79,7 +91,7 @@
 				$('div.simple_overlay, div.sub_overlay').hide();
 			}
 			else {//close only children overlays
-				oParent.find('div.simple_overlay, div.sub_overlay').hide();
+//				oParent.find('div.simple_overlay, div.sub_overlay').hide();//not used now, because we removed 'create multiple overlay' code from jquery.dteditable.js
 
 				if (oTarget.is('a.close')) {//if we clicked on close link
 					oParent.hide();
@@ -97,8 +109,8 @@
     	},
 
     	//set overlay html + optional history
-    	html: function(sContents, bHeader, sOverlayURL) {
-    		if (bHeader) {
+    	html: function(sContents, sOverlayURL) {
+    		if (this.options.className === 'simple_overlay') {
     			$.overlay2.htmlAndHistory(this.overlay, sContents, sOverlayURL);
     		}
     		else {
