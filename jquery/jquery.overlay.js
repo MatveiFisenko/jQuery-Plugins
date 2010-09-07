@@ -26,7 +26,6 @@
 
 /*
  * TODO:
- * optimize storage - now we have array of arrays with 1 element
  * possibly add ESC key event
  *
  */
