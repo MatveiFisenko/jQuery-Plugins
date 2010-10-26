@@ -72,6 +72,7 @@
 			}
 
 			$(this).find('div.errors').html(oResponse.sErrors).parent().show();
+			$('html,body').animate({ scrollTop: $(this).find('div.errors').offset().top });//move page to errors div
 
 			//first add # to error id, than add class, than focus first one
 			$($.map(oResponse.aErrorIDs, function(item) { return '#' + item;}).join()).addClass('ui-state-error').eq(0).focus();
