@@ -52,7 +52,7 @@
 			$.ajax({
 				type: 'POST',
 				url: this.action,
-				data: this,
+				data: $(this).serialize(),
 				success: $.proxy(options.fHandler, this),
 				error: $.proxy(options.fErrorHandler, this)
 			});
