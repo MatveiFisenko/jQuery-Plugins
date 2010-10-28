@@ -252,20 +252,20 @@
     		}
     		$.get(sPath, function(sText, sStatus, oJS) {
     			//check if we sent request with table ID. Used for form sending event to this specific table.
-    			var sTableID = oJS._openArgs.url.match(/_sTableID=([a-z0-9]+)/i);
+    			var sTableID = this.url.match(/_sTableID=([a-z0-9]+)/i);
     			//limitation - only one modal add dialog in a moment!
     			if (sTableID) {
     				$.editable.sTableID = sTableID[1];
     			}
 
     			//check if we sent request with table ID. Used for form sending event to this specific table.
-    			var sParentTableID = oJS._openArgs.url.match(/_sParentTableID=([a-z0-9]+)/i);
+    			var sParentTableID = this.url.match(/_sParentTableID=([a-z0-9]+)/i);
     			//limitation - only one show dialog in a moment!
     			if (sParentTableID) {
     				$.editable.sParentTableID = sParentTableID[1];
     			}
 
-    			options.oOverlay.html(oJS.responseJS.sPageContents, oJS._openArgs.url);
+    			options.oOverlay.html(oJS.responseJS.sPageContents, this.url);
     			options.oOverlay.load();
     		});
     	},

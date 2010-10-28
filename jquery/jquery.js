@@ -5897,8 +5897,6 @@ jQuery.extend({
 	handleSuccess: function( s, xhr, status, data ) {
 		//mot: my plugins expect to see data in 'responseJS' key because they used jshttprequest in the past
 		xhr.responseJS = data;
-		//mot: _openArgs is used in plugins too
-		xhr._openArgs = { url: s.url };
 
 		// If a local callback was specified, fire it and pass it the data
 		if ( s.success ) {
