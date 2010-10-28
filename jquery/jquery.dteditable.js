@@ -158,7 +158,6 @@
 
     			$.post(options.editModule + 'update', oSubmitData, $.proxy(function (sText, sStatus, oJSReq) {
     					//get real new value
-    					sText = oJSReq.responseJS;
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
 	    					//selectColumns can contain hash, to check if sText is string
@@ -265,7 +264,7 @@
     				$.editable.sParentTableID = sParentTableID[1];
     			}
 
-    			options.oOverlay.html(oJS.responseJS.sPageContents, this.url);
+    			options.oOverlay.html(sText.sPageContents, this.url);
     			options.oOverlay.load();
     		});
     	},
@@ -317,7 +316,7 @@
 			}
 			else {
 				$.post(options.sModuleURL + 'add/' + sSubmitData, oSubmitData, function(sText, sStatus, oJSReq) {
-	    			($.editable.addRow(options, oJSReq.responseJS))
+	    			($.editable.addRow(options, sText))
 	    			.children(':first').trigger($.editable.edit);
 
 	    			$.notify.show('added');

@@ -3,8 +3,8 @@
  */
 
 $(function() {
-	$('body').ajaxSuccess(function(e, oJSReq) {
-		$.notify.showDebug(oJSReq.responseJS.debugText);
+	$('body').ajaxSuccess(function(e, oJSReq, request, data) {
+		$.notify.showDebug(data.debugText);
 	});
 
 	$('body').ajaxError(function(e, oJSReq) {

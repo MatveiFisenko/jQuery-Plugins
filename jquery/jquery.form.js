@@ -104,18 +104,18 @@
 
 			$.form.toggleButtons.call(this);
 
-			if (oJSReq.responseJS == null) {
+			if (mData == null) {
 				//we have global error
 				$.notify.show('error', false, this);
 			}
-			else if (oJSReq.responseJS.aErrorIDs != null) {
-//				if (oJSReq.responseJS.aErrorIDs.length == 1 && oJSReq.responseJS.aErrorIDs[0] == 'confirm_form') {
+			else if (mData.aErrorIDs != null) {
+//				if (mData.aErrorIDs.length == 1 && mData.aErrorIDs[0] == 'confirm_form') {
 //					//we must show confirm dialog before send
 //					this.confirmation();
 //				}
 //				else {
 					//show errors
-					$.form.showErrors.call(this, oJSReq.responseJS);
+					$.form.showErrors.call(this, mData);
 //				}
 			}
 			else {
@@ -126,54 +126,54 @@
 					if ($(this).data('form.aOptions').fAfterHandler(oJSReq, this) === false) return false;
 				}
 
-				if (oJSReq.responseJS.reload) {
+				if (mData.reload) {
 					$.notify.show('success', false, this);
 					window.location.reload();
 				}
-				else if (oJSReq.responseJS.ok) {
-					if (oJSReq.responseJS.ok == 1) {
+				else if (mData.ok) {
+					if (mData.ok == 1) {
 						$.notify.show('success', false, this);
 					}
 					else {
-						$.notify.show(oJSReq.responseJS.ok, false, this);
+						$.notify.show(mData.ok, false, this);
 					}
 				}
-				else if (oJSReq.responseJS.location) {
+				else if (mData.location) {
 					$.notify.show('success', false, this);
 					//if location is the same page.
-					if (window.location.pathname + window.location.search == oJSReq.responseJS.location) {
-						oJSReq.responseJS.location += '?' + (new Date()).getTime();
+					if (window.location.pathname + window.location.search == mData.location) {
+						mData.location += '?' + (new Date()).getTime();
 					}
-					window.location = oJSReq.responseJS.location;
+					window.location = mData.location;
 				}
-				else if (oJSReq.responseJS.new_window) {
+				else if (mData.new_window) {
 					oXHRWindow = window.open('','main_xhr_new_window');
 					//appending child div only once!
 					if (!oXHRWindow.document.body.firstChild) {
 						oXHRWindow.document.body.appendChild(document.createElement('div'));
 					}
 
-					oXHRWindow.document.body.firstChild.update(oJSReq.responseJS.sPageContents);
+					oXHRWindow.document.body.firstChild.update(mData.sPageContents);
 				}
 				//if we have new row for a table
-				else if (oJSReq.responseJS.aNewRow) {
+				else if (mData.aNewRow) {
 					//send event only if table is specified, see jquery.editable.js
 					if ($.editable.sTableID) {
-						$('#' + $.editable.sTableID).trigger('eNewRow', [oJSReq.responseJS.aNewRow]);
+						$('#' + $.editable.sTableID).trigger('eNewRow', [mData.aNewRow]);
 					}
 				}
 				//if we have edited row for a table
-				else if (oJSReq.responseJS.aEditRow) {
+				else if (mData.aEditRow) {
 					//send event only if table is specified, see jquery.editable.js
 					if ($.editable.sParentTableID) {
-						$('#' + $.editable.sParentTableID).trigger('eNewRow', [oJSReq.responseJS.aEditRow, true]);
+						$('#' + $.editable.sParentTableID).trigger('eNewRow', [mData.aEditRow, true]);
 						$.notify.show('updated', false, this);
 					}
 				}
 				//if we have delete row for a table
-				else if (oJSReq.responseJS.aDeleteRow) {
+				else if (mData.aDeleteRow) {
 					//successful delete
-					if (oJSReq.responseJS.aDeleteRow !== 'error') {
+					if (mData.aDeleteRow !== 'error') {
 						alert('Объект успешно удалён.');
 						window.location.reload();
 					}
