@@ -8,6 +8,7 @@ $(function() {
 	});
 
 	$('body').ajaxError(function(e, oJSReq) {
+		$.notify.showDebug($.parseJSON(oJSReq.responseText).debugText);
 		//we have global error
 		$.notify.show('error');
 	});
