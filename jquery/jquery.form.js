@@ -99,7 +99,7 @@
 		},
 
 		//on successfull post
-		ajaxSuccess: function(mData, sTestStatus, oJSReq) {
+		ajaxSuccess: function(mData, sTestStatus) {
 			$.form.removeErrors.call(this);
 
 			$.form.toggleButtons.call(this);
@@ -123,7 +123,7 @@
 
 				//if we have custom run handler
 				if ($(this).data('form.aOptions').fAfterHandler) {
-					if ($(this).data('form.aOptions').fAfterHandler(oJSReq, this) === false) return false;
+					if ($(this).data('form.aOptions').fAfterHandler(mData, this) === false) return false;
 				}
 
 				if (mData.reload) {
