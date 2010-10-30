@@ -38,11 +38,16 @@ var _Defaults = {
 		// place tooltip on the right edge
 		position: "center right",
 		// a little tweaking of the position
-		offset: [-2, 10],
+		offset: [0, 10],
 		// use the built-in fadeIn/fadeOut effect
 		effect: "fade",
 		// custom opacity setting
-		opacity: 0.7
+		opacity: 0.7,
+
+		events: {
+			//show tooltip on input mouseenter
+			input: 'focus mouseenter, blur mouseleave'
+		}
 	}
 
 };
