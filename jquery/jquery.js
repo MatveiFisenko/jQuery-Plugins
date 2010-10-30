@@ -5364,13 +5364,13 @@ jQuery.fn.extend({
 						jQuery("<div>")
 							// inject the contents of the document in, removing the scripts
 							// to avoid any 'Permission Denied' errors in IE
-							.append(res.responseJS.sPageContents.replace(rscript, ""))
+							.append(res.responseText.replace(rscript, ""))
 
 							// Locate the specified elements
 							.find(selector) :
 
 						// If not, just inject the full result
-						res.responseJS.sPageContents );
+						res.responseText );
 				}
 
 				if ( callback ) {
@@ -5902,7 +5902,7 @@ jQuery.extend({
 
 		// Fire the global callback
 		if ( s.global ) {
-			jQuery.triggerGlobal( s, "ajaxSuccess", [xhr, s] );
+			jQuery.triggerGlobal( s, "ajaxSuccess", [xhr, s, data] );
 		}
 	},
 

@@ -48,11 +48,11 @@
 			if (!sPath) return;
 
 			$.get(sPath, function(sText, sStatus, oJS) {
-				$(container).html(oJS.responseJS.sPageContents);
+				$(container).html(sText.sPageContents);
 
 				//if we supply title - use it
-				if (oJS.responseJS.sPageTitle) {
-					document.title = oJS.responseJS.sPageTitle;
+				if (sText.sPageTitle) {
+					document.title = sText.sPageTitle;
 				}
 			});
 

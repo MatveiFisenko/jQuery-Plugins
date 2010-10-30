@@ -1,3 +1,19 @@
+/**
+ * Event handlers used everywhere
+ */
+
+$(function() {
+	$('body').ajaxSuccess(function(e, oJSReq, request, data) {
+		$.notify.showDebug(data.debugText);
+	});
+
+	$('body').ajaxError(function(e, oJSReq) {
+		$.notify.showDebug($.parseJSON(oJSReq.responseText).debugText);
+		//we have global error
+		$.notify.show('error');
+	});
+});
+
 /*
  * Store config here
  *

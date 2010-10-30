@@ -158,7 +158,6 @@
 
     			$.post(options.editModule + 'update', oSubmitData, $.proxy(function (sText, sStatus, oJSReq) {
     					//get real new value
-    					sText = oJSReq.responseJS;
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
 	    					//selectColumns can contain hash, to check if sText is string
@@ -252,20 +251,20 @@
     		}
     		$.get(sPath, function(sText, sStatus, oJS) {
     			//check if we sent request with table ID. Used for form sending event to this specific table.
-    			var sTableID = oJS._openArgs.url.match(/_sTableID=([a-z0-9]+)/i);
+    			var sTableID = this.url.match(/_sTableID=([a-z0-9]+)/i);
     			//limitation - only one modal add dialog in a moment!
     			if (sTableID) {
     				$.editable.sTableID = sTableID[1];
     			}
 
     			//check if we sent request with table ID. Used for form sending event to this specific table.
-    			var sParentTableID = oJS._openArgs.url.match(/_sParentTableID=([a-z0-9]+)/i);
+    			var sParentTableID = this.url.match(/_sParentTableID=([a-z0-9]+)/i);
     			//limitation - only one show dialog in a moment!
     			if (sParentTableID) {
     				$.editable.sParentTableID = sParentTableID[1];
     			}
 
-    			options.oOverlay.html(oJS.responseJS.sPageContents, oJS._openArgs.url);
+    			options.oOverlay.html(sText.sPageContents, this.url);
     			options.oOverlay.load();
     		});
     	},
@@ -317,7 +316,7 @@
 			}
 			else {
 				$.post(options.sModuleURL + 'add/' + sSubmitData, oSubmitData, function(sText, sStatus, oJSReq) {
-	    			($.editable.addRow(options, oJSReq.responseJS))
+	    			($.editable.addRow(options, sText))
 	    			.children(':first').trigger($.editable.edit);
 
 	    			$.notify.show('added');
