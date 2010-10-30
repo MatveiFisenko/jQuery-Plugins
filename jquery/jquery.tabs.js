@@ -47,7 +47,7 @@
 
 			if (!sPath) return;
 
-			$.get(sPath, function(sText, sStatus, oJS) {
+			$.get(sPath, function(sText) {
 				$(container).html(sText.sPageContents);
 
 				//if we supply title - use it

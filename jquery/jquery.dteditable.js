@@ -156,7 +156,7 @@
                     }
     			}
 
-    			$.post(options.editModule + 'update', oSubmitData, $.proxy(function (sText, sStatus, oJSReq) {
+    			$.post(options.editModule + 'update', oSubmitData, $.proxy(function (sText) {
     					//get real new value
     					//if we edited special column
 	    				if (options.selectColumns[oSubmitData.sColumnName]) {
@@ -249,7 +249,7 @@
     		else {
     			sPath = options.sModuleURL + 'add/' + oTD;
     		}
-    		$.get(sPath, function(sText, sStatus, oJS) {
+    		$.get(sPath, function(sText) {
     			//check if we sent request with table ID. Used for form sending event to this specific table.
     			var sTableID = this.url.match(/_sTableID=([a-z0-9]+)/i);
     			//limitation - only one modal add dialog in a moment!
@@ -315,7 +315,7 @@
 				//all processing will be held in bindTableRowEvent
 			}
 			else {
-				$.post(options.sModuleURL + 'add/' + sSubmitData, oSubmitData, function(sText, sStatus, oJSReq) {
+				$.post(options.sModuleURL + 'add/' + sSubmitData, oSubmitData, function(sText) {
 	    			($.editable.addRow(options, sText))
 	    			.children(':first').trigger($.editable.edit);
 

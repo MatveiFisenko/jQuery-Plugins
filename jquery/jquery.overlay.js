@@ -101,7 +101,7 @@
 
 			//work with overlay history
 			if (oTarget.closest('ul.overlay2History').length) {
-				$.get(oTarget.attr('href'), function(sText, sStatus, oJS) {
+				$.get(oTarget.attr('href'), function(sText) {
 					$.overlay2.htmlAndHistory(oTarget.closest('div.simple_overlay'), sText.sPageContents, this.url, oTarget);
 				});
 
