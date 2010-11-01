@@ -56,7 +56,8 @@
 				}
 			});
 
-			oA.parent().addClass('current').siblings().removeClass('current');
+			$(this).find('a.current').removeClass('current');
+			oA.addClass('current');
 
 			if (!bNoChange) {
 				//not change if we (possible) have lower level tabs, which need original location.hash.
