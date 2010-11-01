@@ -64,8 +64,16 @@
 				top = this.options.top == 'center' ? Math.max((w.height() - oHeight) / 2, 0) :
 					parseInt(this.options.top, 10) / 100 * w.height();
 			}
+			else {
+				top = parseInt(this.options.top);
+			}
 
-			if (this.options.left == 'center') left = Math.max((w.width() - oWidth) / 2, 0);
+			if (this.options.left == 'center') {
+				left = Math.max((w.width() - oWidth) / 2, 0);
+			}
+			else {
+				left = parseInt(this.options.left);
+			}
 
 			top += w.scrollTop();
 			left += w.scrollLeft();
