@@ -237,7 +237,7 @@
 
     	showOverlay: function(options, oTD) {
     		//now we have one 1 main overlay and 1 modal overlay. main overlay is with history support
-    		options.oOverlay = $.overlay2.create({ className: oTD.nodeName ? 'simple_overlay' : 'sub_overlay', top: oTD.nodeName ? '10%' : '15%' });
+    		options.oOverlay = $.overlay2.create({ className: oTD.nodeName ? 'simple_overlay' : 'sub_overlay', top: oTD.nodeName ? $(oTD).offset().top : '15%' });
 
     		var sPath;
     		//open normal 'show' overlay
