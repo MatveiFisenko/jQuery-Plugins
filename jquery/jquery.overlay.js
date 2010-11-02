@@ -129,15 +129,17 @@
 
     	htmlAndHistory: function(oOverlay, sContents, sOverlayURL, oA) {
     		//get history ul
-    		var oHistory = oOverlay.children('ul.overlay2History');
+    		var oHistory = oOverlay.children('ul.overlay2History'),
+    			oContents = oOverlay.children('div.tabsPane');
 
     		if (!oHistory.length) {
     			oHistory = $('<ul class="tabs overlay2History"></ul>').appendTo(oOverlay);
+    			oContents = $('<div class="tabsPane"></div>').appendTo(oOverlay);
     		}
 
-    		oHistory.nextAll().remove();//remove old content
-    		oHistory.after($.overlay2.sHeader + sContents)//new content
-    			.find('a.current').removeClass('current');//remove active class from previous active
+    		oHistory.find('a.current').removeClass('current');//remove active class from previous active
+
+    		oContents.html($.overlay2.sHeader + sContents);//new content
 
     		if (oA) {//check if we clicked on history tab
     			oA.addClass('current');
