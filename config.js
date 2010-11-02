@@ -55,10 +55,6 @@ var _Defaults = {
 		position: "center right",
 		// a little tweaking of the position
 		offset: [0, 10],
-		// use the built-in fadeIn/fadeOut effect
-		effect: "fade",
-		// custom opacity setting
-		opacity: 0.7,
 
 		events: {
 			//show tooltip on input mouseenter
