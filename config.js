@@ -55,6 +55,8 @@ var _Defaults = {
 		position: "center right",
 		// a little tweaking of the position
 		offset: [0, 10],
+		//determine tooltip position relative to it's parent
+		relative: true,
 
 		events: {
 			//show tooltip on input mouseenter
