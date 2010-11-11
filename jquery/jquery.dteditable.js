@@ -32,6 +32,7 @@
   * @param Bool			options[disableDetails]	Create 'show' overlay on dblclick event. Default false.
   * @param String		options[showUrl]		Action for 'show' overlay on dblclick event. Default 'show'.
   * @param Array/bool	options[disableEdit]	Disable editing of several table columns. Starting from 0. Example: [0, 1]. If true - disable edit all. Default false.
+  * @param Object		options[overlay]		Params for overlay. Currently supports only history (bool).
   *
   */
 
@@ -237,7 +238,11 @@
 
     	showOverlay: function(options, oTD) {
     		//now we have one 1 main overlay and 1 modal overlay. main overlay is with history support
-    		options.oOverlay = $.overlay2.create({ className: oTD.nodeName ? 'simple_overlay' : 'sub_overlay', top: oTD.nodeName ? $(oTD).offset().top : '15%' });
+    		options.oOverlay = $.overlay2.create({
+    			className: oTD.nodeName ? 'simple_overlay' : 'sub_overlay', top: oTD.nodeName ? $(oTD).offset().top : '15%',
+    			//we added option to override default behaviour - now we can disable history for main overlay
+    			history: oTD.nodeName ? options.overlay.history : false
+    		});
 
     		var sPath;
     		//open normal 'show' overlay
@@ -357,7 +362,9 @@
     };
 
 	//default options used, assign selectColumns to get rid of annoying 'check object before check object property'
-    $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {}, showUrl: 'show' };
+    $.editable.defaultOptions = { callback: $.editable.defaultCallback, submitdata: $.editable.defaultSubmitdata, selectColumns: {}, showUrl: 'show',
+    	overlay: { history: true }
+    };
     $.editable.edit = 'click.' + $.editable.sSelfName;
 
 })(jQuery);

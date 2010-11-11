@@ -22,6 +22,7 @@
   * @param string		options[className]		Overlay className, mandatory. Used for history tab. *
   * @param string		options[top]			Vertical position. Default '10%' from top.
   * @param string		options[left]			Horizontal position. Default 'center'.
+  * @param bool			options[history]		Show history tabs. Default false.
   *
   */
 
@@ -119,12 +120,22 @@
 
     	//set overlay html + optional history
     	html: function(sContents, sOverlayURL) {
-    		if (this.options.className === 'simple_overlay') {
+    		if (this.options.history) {
     			$.overlay2.htmlAndHistory(this.overlay, sContents, sOverlayURL);
     		}
     		else {
-    			this.overlay.html($.overlay2.sHeader + sContents);
+    			$.overlay2.htmlNoHistory(this.overlay, sContents);
     		}
+    	},
+
+    	htmlNoHistory: function(oOverlay, sContents) {
+    		var oContents = oOverlay.children('div.tabsPaneBorderAll');
+
+    		if (!oContents.length) {
+    			oContents = $('<div class="tabsPaneBorderAll"></div>').appendTo(oOverlay);
+    		}
+
+    		oContents.html($.overlay2.sHeader + sContents);//new content
     	},
 
     	htmlAndHistory: function(oOverlay, sContents, sOverlayURL, oA) {
@@ -156,6 +167,6 @@
     };
 
     //default options used
-    $.overlay2.defaultOptions = { top: '10%', left: 'center' };
+    $.overlay2.defaultOptions = { top: '10%', left: 'center', history: false };
 
 })(jQuery);
