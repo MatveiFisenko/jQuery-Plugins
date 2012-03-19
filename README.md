@@ -20,9 +20,11 @@ I think openTable and dteditable worth attention.
 jsfiddle examples for each plugin.
 
 ## openTable
-Drop-in replacement for datatables.net plugin. And uses it's CSS.
-
+Drop-in replacement for datatables.net plugin. And uses it's CSS.  
 Much faster and bug-free.
+
+See comments in file about features and differences between datables.  
+Example (with dteditable): http://jsfiddle.net/motik/QDhLJ/
 
 ## dteditable
 Replacement for www.appelsiini.net/projects/jeditable plugin. 
