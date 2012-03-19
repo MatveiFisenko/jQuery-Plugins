@@ -8,9 +8,10 @@ Almost 2 years I had pain in my.. head and now I release them.
 
 ### Why they are built?
 The plan was:
-1. Try existing plugin.
-2. Find fatal flaw.
-3. Make your own.
+
+1.  Try existing plugin.
+2.  Find fatal flaw.
+3.  Make your own.
 
 ### Do they deserve attention?
 I think openTable and dteditable worth attention.
