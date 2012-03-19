@@ -16,6 +16,9 @@ The plan was:
 ### Do they deserve attention?
 I think openTable and dteditable worth attention.
 
+## TODO
+jsfiddle examples for each plugin.
+
 ## openTable
 Drop-in replacement for datatables.net plugin. And uses it's CSS.
 
