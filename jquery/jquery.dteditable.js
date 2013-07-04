@@ -252,7 +252,7 @@
     		}
     		//open modal dialog
     		else {
-    			sPath = options.sModuleURL + 'add/' + oTD;
+    			sPath = options.sModuleURL + 'add.tpl' + oTD;
     		}
     		$.get(sPath, function(sText) {
     			//check if we sent request with table ID. Used for form sending event to this specific table.
